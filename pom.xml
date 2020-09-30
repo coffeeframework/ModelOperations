@@ -8,13 +8,36 @@
 	<name>HLVLExtended</name>
 	<description>HLVL extension for scalability support</description>
 
-	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/xtext-maven-plugin -->
-		<dependency>
-			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>xtext-maven-plugin</artifactId>
-			<version>2.23.0</version>
-		</dependency>
+	<!--<dependencies> https://mvnrepository.com/artifact/org.eclipse.xtext/xtext-maven-plugin 
+		<dependency> <groupId>org.eclipse.xtext</groupId> <artifactId>xtext-maven-plugin</artifactId> 
+		<version>2.23.0</version> </dependency> </dependencies> -->
 
+	<dependencies>
+		<dependency>
+			<groupId>com.coffee.hlvl</groupId>
+			<artifactId>hlvl-parser</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.core.runtime</artifactId>
+						<version>3.14.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.equinox.common</artifactId>
+						<version>3.8.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 </project>
