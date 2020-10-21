@@ -79,27 +79,16 @@ public class HlvlExtended {
 			}
 		}
 		aggregatedModel.append("    " + hlvlFactory.getCommonList(commonIds));
-		
-//		List<String> childMandatory = new ArrayList<>();
-//		for (String id : commonIds) {
-//			if(!id.equals(modelName))
-//			{
-//				childMandatory.add(id);
-//			}
-//		}
-//		aggregatedModel.append(getGroup(modelName, childMandatory, childMandatory.size() + "", childMandatory.size() + ""));
 	}
 
 	private static String getRelation(Relation relation, List<String> commonIds, HlvlExtendedFactory hlvlFactory) {
-		// TODO Necesitamos identificar el tipo de relaci�n
-		// para luego poder retornar la sintaxis de la relaci�n seg�n hlvlFactory
-
-		String relationString = "";
+		String relationString = "    ";
 
 		if (relation instanceof Common) {
 			
 			EList<ElmDeclaration> elements = ((CommonImpl) relation).getElements().getValues();
 			elements.forEach((element) -> commonIds.add(element.getName()));
+			relationString = "";
 			
 		} else if (relation instanceof Pair) {
 			
@@ -110,7 +99,7 @@ public class HlvlExtended {
 			if (pair.getOperator().equals(HlvlBasicKeys.IMPLIES)) {
 				relationString = hlvlFactory.getImplies(var1, var2);
 			} else if (pair.getOperator().equals(HlvlBasicKeys.MUTEX)) {
-				relationString = "    " + hlvlFactory.getMutex(var1, var2);
+				relationString += hlvlFactory.getMutex(var1, var2);
 			}
 			
 		} else if (relation instanceof VarList) {
@@ -124,7 +113,7 @@ public class HlvlExtended {
 			if (varList.getOperator().equals(HlvlBasicKeys.IMPLIES)) {
 				relationString = hlvlFactory.getImpliesList(var1, list);
 			} else if (varList.getOperator().equals(HlvlBasicKeys.MUTEX)) {
-				relationString = "    " + hlvlFactory.getMutexList(var1, list);
+				relationString += hlvlFactory.getMutexList(var1, list);
 			}
 
 		} else if (relation instanceof Decomposition) {
@@ -137,7 +126,7 @@ public class HlvlExtended {
 
 			decomposition.getChildren().getValues().forEach((element) -> children.add(element.getName()));
 
-			relationString = "    " + hlvlFactory.getDecompositionList(parent, children, min, max);
+			relationString += hlvlFactory.getDecompositionList(parent, children, min, max);
 			
 		} else if (relation instanceof Group) {
 			
@@ -149,7 +138,7 @@ public class HlvlExtended {
 
 			group.getChildren().getValues().forEach((element) -> children.add(element.getName()));
 
-			relationString = "    " + hlvlFactory.getGroup(parent, children, min, max);
+			relationString += hlvlFactory.getGroup(parent, children, min, max);
 		}
 		// TODO Estos casos por ahora están fuera del alcance del proyecto de grado	
 //		} else if (relation instanceof Constraint) {
@@ -175,7 +164,7 @@ public class HlvlExtended {
 		return null;
 	}
 
-	private boolean areDisjoint() {
+	private boolean areDisjoint(Model[] models) {
 		return false;
 	}
 
@@ -192,10 +181,4 @@ public class HlvlExtended {
 		}
 		return models;
 	}
-
-	public boolean verifyModels(String[] modelsUris) {
-		// generateModels(modelsUris);
-		return areDisjoint();
-	}
-
 }
