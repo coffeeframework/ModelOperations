@@ -1,0 +1,9 @@
+model SistemaOperativo
+   elements:
+   boolean sistemaOperativo
+   boolean Windows
+   boolean Linux
+   boolean MacOS
+   relations:
+   com1: common(sistemaOperativo)
+   grp1: group(sistemaOperativo, [Windows, Linux, MacOS],[1,1])

@@ -8,6 +8,13 @@
 	<name>HLVLExtended</name>
 	<description>HLVL extension for scalability support</description>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.8.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	
 	<!--<dependencies> https://mvnrepository.com/artifact/org.eclipse.xtext/xtext-maven-plugin 
 		<dependency> <groupId>org.eclipse.xtext</groupId> <artifactId>xtext-maven-plugin</artifactId> 
 		<version>2.23.0</version> </dependency> </dependencies> -->
@@ -16,7 +23,23 @@
 		<dependency>
 			<groupId>com.coffee.hlvl</groupId>
 			<artifactId>hlvl-parser</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.coffeeframework</groupId>
+			<artifactId>basichlvlpackage</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 	</dependencies>
 

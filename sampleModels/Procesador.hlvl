@@ -1,0 +1,20 @@
+model Procesador
+  elements:
+   boolean procesador
+   boolean frecuencia
+   boolean ONEGHz
+   boolean TWOGHz
+   boolean FOURGHz
+   boolean nucleos
+   boolean N2
+   boolean N3
+   boolean N4
+   boolean hilos
+   boolean H2
+   boolean H3
+  relations:
+   com1: common(procesador)
+   grp1: group(procesador, [frecuencia, nucleos, hilos],[3,3])
+   grp2: group(frecuencia, [ONEGHz, TWOGHz, FOURGHz],[1,1])
+   dec2: group(hilos, [H2, H3],[1,1]) 
+   grp3: group(nucleos, [N2, N3, N4],[1,*])
