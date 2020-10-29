@@ -1,6 +1,7 @@
 package com.github.coffeeframework.hlvlExtended;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -39,10 +40,20 @@ public class HlvlExtended {
 		// han dado como
 		// parámetro, si no tal vez tirar una excepción que pida los demás modelos
 		// requeridos
-		HlvlBasicFactory hlvlFactory = new HlvlBasicFactory();
 
 		StringBuilder aggregatedModel = new StringBuilder();
 
+		addElements(aggregatedModel, modelName, models);
+		addRelations(aggregatedModel, modelName, models);
+
+		System.out.println(aggregatedModel.toString());
+
+		return HLVLParser.getInstance().generateModel(aggregatedModel.toString());
+	}
+
+	private static void addElements(StringBuilder aggregatedModel, String modelName, Model[] models) {
+
+		HlvlExtendedFactory hlvlFactory = new HlvlExtendedFactory();
 		// Adds model and elements block declarations
 		aggregatedModel.append(hlvlFactory.getHeader(modelName));
 
@@ -55,11 +66,6 @@ public class HlvlExtended {
 				aggregatedModel.append("    " + hlvlFactory.getElement(element.getName()));
 			}
 		}
-
-		addRelations(aggregatedModel, modelName, models);
-
-		System.out.println(aggregatedModel.toString());
-		return HLVLParser.generateModel(aggregatedModel.toString());
 	}
 
 	private static void addRelations(StringBuilder aggregatedModel, String modelName, Model[] models) {
@@ -85,25 +91,25 @@ public class HlvlExtended {
 		String relationString = "    ";
 
 		if (relation instanceof Common) {
-			
+
 			EList<ElmDeclaration> elements = ((CommonImpl) relation).getElements().getValues();
 			elements.forEach((element) -> commonIds.add(element.getName()));
 			relationString = "";
-			
+
 		} else if (relation instanceof Pair) {
-			
+
 			Pair pair = (Pair) relation;
 			String var1 = pair.getVar1().getName();
 			String var2 = pair.getVar2().getName();
 
 			if (pair.getOperator().equals(HlvlBasicKeys.IMPLIES)) {
-				relationString = hlvlFactory.getImplies(var1, var2);
+				relationString += hlvlFactory.getImplies(var1, var2);
 			} else if (pair.getOperator().equals(HlvlBasicKeys.MUTEX)) {
 				relationString += hlvlFactory.getMutex(var1, var2);
 			}
-			
+
 		} else if (relation instanceof VarList) {
-			
+
 			VarList varList = (VarList) relation;
 			String var1 = varList.getVar1().getName();
 			List<String> list = new ArrayList<>();
@@ -117,7 +123,7 @@ public class HlvlExtended {
 			}
 
 		} else if (relation instanceof Decomposition) {
-			
+
 			Decomposition decomposition = (Decomposition) relation;
 			String min = decomposition.getMin() + "";
 			String max = decomposition.getMax() + "";
@@ -127,9 +133,9 @@ public class HlvlExtended {
 			decomposition.getChildren().getValues().forEach((element) -> children.add(element.getName()));
 
 			relationString += hlvlFactory.getDecompositionList(parent, children, min, max);
-			
+
 		} else if (relation instanceof Group) {
-			
+
 			Group group = (Group) relation;
 			String min = group.getMin() + "";
 			String max = group.getMax().getValue();
@@ -140,7 +146,7 @@ public class HlvlExtended {
 
 			relationString += hlvlFactory.getGroup(parent, children, min, max);
 		}
-		// TODO Estos casos por ahora están fuera del alcance del proyecto de grado	
+		// TODO Estos casos por ahora están fuera del alcance del proyecto de grado
 //		} else if (relation instanceof Constraint) {
 //
 //			
@@ -168,17 +174,37 @@ public class HlvlExtended {
 		return false;
 	}
 
-	public static boolean isHlvlExtended(Model model) {
-//		return (model.getExtendedModels() != null && !model.getExtendedModels().isEmpty()) ? true : false;
-		return false;
+	private static List<String> getMissingModels(List<String> inputModels, List<String> missingModels) {
+		missingModels.removeAll(inputModels);
+		return missingModels;
 	}
 
 	public static Model[] generateModels(String[] modelsUris) throws Exception {
 
 		Model[] models = new Model[modelsUris.length];
 		for (int i = 0; i < modelsUris.length; i++) {
-			models[i] = HLVLParser.generateModel(modelsUris[i]);
+			models[i] = HLVLParser.getInstance().generateModel(modelsUris[i]);
 		}
 		return models;
+	}
+
+	/**
+	 * 
+	 * @return list of extended models that the user didn't upload
+	 */
+	private static List<String> verifyInheritance(Model[] models) {
+
+		List<String> missingModels = new ArrayList<>();
+		List<String> inputModels = new ArrayList<String>();
+
+		for (int i = 0; i < models.length; i++) {
+			inputModels.add(models[i].getName());
+
+			if (models[i].getExtendedModels() != null && !models[i].getExtendedModels().getIds().isEmpty()) {
+				models[i].getExtendedModels().getIds().forEach(id -> missingModels.add(id.getImportURI()));
+				getMissingModels(inputModels, missingModels);
+			}
+		}
+		return null;
 	}
 }
