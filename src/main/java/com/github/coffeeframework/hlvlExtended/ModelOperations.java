@@ -1,6 +1,7 @@
 package com.github.coffeeframework.hlvlExtended;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.codegen.ecore.templates.model.FactoryClass;
@@ -26,19 +27,20 @@ import com.ibm.icu.impl.UResource.Array;
 
 public class ModelOperations {
 
-	private static Model insert(Model baseModel, Model aspectModel, String baseElementName, String aspectElementName,
+	public static Model insert(Model baseModel, Model aspectModel, String baseElementName, String aspectElementName,
 			HLVLExtendedKeys operator, int index) {
 
 		ElmDeclaration baseElement = findElement(baseModel, baseElementName);
 		ElmDeclaration aspectElement = findElement(aspectModel, aspectElementName);
-		List<RelDeclaration> aspectElementRelations = findRelations(aspectModel, aspectElement);
-		List<ElmDeclaration> aspectElementDeclaration = getElements(aspectElementRelations);
-
+		List<RelDeclaration> aspectElementRelations = new ArrayList<>();
+		List<ElmDeclaration> aspectElementDeclaration = new ArrayList<>();
+		getAspectComponents(aspectModel, aspectElement, aspectElementRelations, aspectElementDeclaration);
+		
 		baseModel.getElements().addAll(aspectElementDeclaration);
 		baseModel.getRelations().addAll(aspectElementRelations);
 		baseModel.getRelations().add(createJoinPoint(baseElement, aspectElement, operator, index));
 
-		return null;
+		return baseModel;
 	}
 
 	private static RelDeclaration createJoinPoint(ElmDeclaration baseElement, ElmDeclaration aspectElement,
@@ -46,87 +48,86 @@ public class ModelOperations {
 		RelDeclaration joinPoint = HlvlFactory.eINSTANCE.createRelDeclaration();
 		joinPoint.setName("jp" + index);
 
-		Relation relation =  null;
-		
+		Relation relation = null;
+
 		switch (operator) {
 		case MANDATORY_DECOMPOSITION:
-			
+
 			Decomposition decomposition = HlvlFactory.eINSTANCE.createDecomposition();
 			decomposition.setParent(baseElement);
-			
+
 			ListOfIDs listOfIDs = HlvlFactory.eINSTANCE.createListOfIDs();
 			listOfIDs.getValues().add(aspectElement);
 			decomposition.setChildren(listOfIDs);
-			
+
 			decomposition.setMin(1);
 			decomposition.setMax(1);
-			
+
 			relation = decomposition;
-			
+
 			break;
-			
+
 		case OPTIONAL_DECOMPOSITION:
 
 			decomposition = HlvlFactory.eINSTANCE.createDecomposition();
 			decomposition.setParent(baseElement);
-			
+
 			listOfIDs = HlvlFactory.eINSTANCE.createListOfIDs();
 			listOfIDs.getValues().add(aspectElement);
 			decomposition.setChildren(listOfIDs);
-			
+
 			decomposition.setMin(0);
 			decomposition.setMax(1);
-			
+
 			relation = decomposition;
-			
+
 			break;
-			
+
 		case OR_GROUP:
 
 			Group group = HlvlFactory.eINSTANCE.createGroup();
 			group.setParent(baseElement);
-			
+
 			listOfIDs = HlvlFactory.eINSTANCE.createListOfIDs();
 			listOfIDs.getValues().add(aspectElement);
 			group.setChildren(listOfIDs);
-			
+
 			Range max = HlvlFactory.eINSTANCE.createRange();
 			max.setValue("*");
 			group.setMin(1);
 			group.setMax(max);
-			
+
 			relation = group;
-			
+
 			break;
-			
+
 		case XOR_GROUP:
 
 			group = HlvlFactory.eINSTANCE.createGroup();
 			group.setParent(baseElement);
-			
+
 			listOfIDs = HlvlFactory.eINSTANCE.createListOfIDs();
 			listOfIDs.getValues().add(aspectElement);
 			group.setChildren(listOfIDs);
-			
+
 			max = HlvlFactory.eINSTANCE.createRange();
 			max.setValue("1");
 			group.setMin(0);
 			group.setMax(max);
-			
+
 			relation = group;
-			
+
 			break;
-			
+
 		default:
 			break;
 		}
-		
+
 		joinPoint.setExp(relation);
-		
+
 		return joinPoint;
 	}
 
-	
 	private static List<ElmDeclaration> getElements(List<RelDeclaration> aspectElementRelations) {
 
 		List<ElmDeclaration> elements = new ArrayList<>();
@@ -165,57 +166,81 @@ public class ModelOperations {
 		return elements;
 	}
 
-	private static List<RelDeclaration> findRelations(Model model, ElmDeclaration element) {
-		List<RelDeclaration> relations = new ArrayList<>();
+	/**
+	 * Permite extraer del parámetro model: 
+	 * i. la cadena de relaciones asociadas al parámetro element,
+	 * es decir, encuentra toda la cadena de elementos relacionados y retorna a
+	 * través del parámetro relatedRelations todas las relaciones asociadas a dichos
+	 * elementos.
+	 * 
+	 * ii. la cadena de elementos asociados al parámetro element y la retorna a
+	 * través del parámetro relatedElements.
+	 * 
+	 * @param model:            modelo del cual se extraerán las relaciones.
+	 * @param element:          elemento inicial para verificar las asociaciones.
+	 * @param relatedRelations: lista usada para almacenar la cadena de relaciones
+	 *                          asociadas al parámetro element.
+	 * @param relatedElements:  lista usada para almacenar la cadena de elementos
+	 *                          asociados al parámetro element.
+	 */
+	//Los nombres de los parámetros difieren en el llamado y el metodo
+	private static void getAspectComponents(Model model, ElmDeclaration element, List<RelDeclaration> relatedRelations,
+			List<ElmDeclaration> relatedElements) {
 
-		for (RelDeclaration relation : model.getRelations()) {
+		List<RelDeclaration> modelRelations = new ArrayList<>();
+		Collections.copy(modelRelations, model.getRelations());
+
+		relatedElements.add(element);
+
+		for (RelDeclaration relation : modelRelations) {
 			if (relation.getExp() instanceof Common) {
 
 				EList<ElmDeclaration> elements = ((CommonImpl) relation.getExp()).getElements().getValues();
-				if (elements.contains(element)) {
-					relations.add(relation);
+				if (elements.stream().anyMatch(e -> relatedElements.contains(e))) {
+					relatedElements.addAll(elements);
+					relatedRelations.add(relation);
+					modelRelations.remove(relation);
 				}
 
 			} else if (relation.getExp() instanceof Pair) {
 
-				Pair pair = (Pair) relation;
+				Pair pair = (Pair) relation.getExp();
 				ElmDeclaration var1 = pair.getVar1();
 				ElmDeclaration var2 = pair.getVar2();
 
 				if (var1.getName().equals(element.getName()) || var2.getName().equals(element.getName())) {
-					relations.add(relation);
+					relatedRelations.add(relation);
 				}
 
 			} else if (relation.getExp() instanceof VarList) {
 
-				VarList varList = (VarList) relation;
+				VarList varList = (VarList) relation.getExp();
 				ElmDeclaration var1 = varList.getVar1();
 
 				if (var1.getName().equals(element.getName()) || varList.getList().getValues().contains(element)) {
-					relations.add(relation);
+					relatedRelations.add(relation);
 				}
 
 			} else if (relation.getExp() instanceof Decomposition) {
 
-				Decomposition decomposition = (Decomposition) relation;
+				Decomposition decomposition = (Decomposition) relation.getExp();
 				ElmDeclaration parent = decomposition.getParent();
 
 				if (parent.getName().equals(element.getName())
 						|| decomposition.getChildren().getValues().contains(element)) {
-					relations.add(relation);
+					relatedRelations.add(relation);
 				}
 
 			} else if (relation.getExp() instanceof Group) {
 
-				Group group = (Group) relation;
+				Group group = (Group) relation.getExp();
 				ElmDeclaration parent = group.getParent();
 
 				if (parent.getName().equals(element.getName()) || group.getChildren().getValues().contains(element)) {
-					relations.add(relation);
+					relatedRelations.add(relation);
 				}
 			}
 		}
-		return relations;
 	}
 
 	private static ElmDeclaration findElement(Model model, String elementName) {
@@ -234,7 +259,7 @@ public class ModelOperations {
 				}
 			} else if (relation.getExp() instanceof Pair) {
 
-				Pair pair = (Pair) relation;
+				Pair pair = (Pair) relation.getExp();
 				ElmDeclaration var1 = pair.getVar1();
 				ElmDeclaration var2 = pair.getVar2();
 
@@ -247,7 +272,7 @@ public class ModelOperations {
 
 			} else if (relation.getExp() instanceof VarList) {
 
-				VarList varList = (VarList) relation;
+				VarList varList = (VarList) relation.getExp();
 				ElmDeclaration var1 = varList.getVar1();
 
 				if (var1.getName().equals(elementName)) {
@@ -264,7 +289,7 @@ public class ModelOperations {
 
 			} else if (relation.getExp() instanceof Decomposition) {
 
-				Decomposition decomposition = (Decomposition) relation;
+				Decomposition decomposition = (Decomposition) relation.getExp();
 				ElmDeclaration parent = decomposition.getParent();
 
 				if (parent.getName().equals(elementName)) {
@@ -281,7 +306,7 @@ public class ModelOperations {
 
 			} else if (relation.getExp() instanceof Group) {
 
-				Group group = (Group) relation;
+				Group group = (Group) relation.getExp();
 				ElmDeclaration parent = group.getParent();
 
 				if (parent.getName().equals(elementName)) {
@@ -298,11 +323,6 @@ public class ModelOperations {
 			}
 		}
 		return baseFeature;
-	}
-
-	private HLVLExtendedKeys getOperator() {
-		HLVLExtendedKeys.MANDATORY_DECOMPOSITION.getRelation();
-		return null;
 	}
 
 	/**

@@ -2,7 +2,6 @@ package com.github.coffeeframework.hlvlExtended;
 
 import java.io.IOException;
 
-import com.coffee.generator.HLVLParser;
 import com.coffee.hlvl.Model;
 
 public class Main {
@@ -61,7 +60,11 @@ public class Main {
 
 		try {
 			Model[] models = ModelOperations.generateModels(modelsUris);
-			Model model = ModelOperations.aggregate(models, "TestAggregation");
+//			Model model = ModelOperations.aggregate(models, "TestAggregation");
+			
+			Model mergedModel = ModelOperations.insert(models[2], models[1], "evga", "sistemaOperativo", HLVLExtendedKeys.MANDATORY_DECOMPOSITION, 0);
+			System.out.println(mergedModel.toString());
+			int i = 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
