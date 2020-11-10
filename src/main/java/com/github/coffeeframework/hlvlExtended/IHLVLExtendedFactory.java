@@ -2,7 +2,7 @@ package com.github.coffeeframework.hlvlExtended;
 
 import java.util.List;
 
-public interface IHlvlExtendedFactory {
+public interface IHLVLExtendedFactory {
 
 	public String getGroup(String parent, List<String> children, String min, String max);
 	public String getImpliesList(String var1, List<String> list);

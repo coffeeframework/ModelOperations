@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.coffeeframework.basickhlvlpackage.HlvlBasicFactory;
 
-public class HlvlExtendedFactory extends HlvlBasicFactory implements IHlvlExtendedFactory{
+public class HLVLExtendedFactory extends HlvlBasicFactory implements IHLVLExtendedFactory{
 
 	private static int numId = 0;
 	
