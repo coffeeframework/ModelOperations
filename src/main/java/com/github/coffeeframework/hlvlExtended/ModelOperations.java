@@ -3,10 +3,10 @@ package com.github.coffeeframework.hlvlExtended;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import org.eclipse.emf.codegen.ecore.templates.model.FactoryClass;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EcoreFactory;
 
 import com.coffee.generator.HLVLParser;
 import com.coffee.hlvl.Common;
@@ -23,7 +23,6 @@ import com.coffee.hlvl.Relation;
 import com.coffee.hlvl.VarList;
 import com.coffee.hlvl.impl.CommonImpl;
 import com.github.coffeeframework.basickhlvlpackage.HlvlBasicKeys;
-import com.ibm.icu.impl.UResource.Array;
 
 public class ModelOperations {
 
@@ -32,12 +31,12 @@ public class ModelOperations {
 
 		ElmDeclaration baseElement = findElement(baseModel, baseElementName);
 		ElmDeclaration aspectElement = findElement(aspectModel, aspectElementName);
-		List<RelDeclaration> aspectElementRelations = new ArrayList<>();
-		List<ElmDeclaration> aspectElementDeclaration = new ArrayList<>();
-		getAspectComponents(aspectModel, aspectElement, aspectElementRelations, aspectElementDeclaration);
-		
-		baseModel.getElements().addAll(aspectElementDeclaration);
-		baseModel.getRelations().addAll(aspectElementRelations);
+		List<RelDeclaration> aspectRelatedRelations = new ArrayList<>();
+		List<ElmDeclaration> aspectRelatedElements = new ArrayList<>();
+		getAspectComponents(aspectModel, aspectElement, aspectRelatedRelations, aspectRelatedElements);
+
+		baseModel.getElements().addAll(aspectRelatedElements);
+		baseModel.getRelations().addAll(aspectRelatedRelations);
 		baseModel.getRelations().add(createJoinPoint(baseElement, aspectElement, operator, index));
 
 		return baseModel;
@@ -167,39 +166,42 @@ public class ModelOperations {
 	}
 
 	/**
-	 * Permite extraer del parámetro model: 
-	 * i. la cadena de relaciones asociadas al parámetro element,
-	 * es decir, encuentra toda la cadena de elementos relacionados y retorna a
-	 * través del parámetro relatedRelations todas las relaciones asociadas a dichos
-	 * elementos.
+	 * Permite extraer del parámetro model: i. la cadena de relaciones asociadas al
+	 * parámetro element, es decir, encuentra toda la cadena de elementos
+	 * relacionados y retorna a través del parámetro relatedRelations todas las
+	 * relaciones asociadas a dichos elementos.
 	 * 
 	 * ii. la cadena de elementos asociados al parámetro element y la retorna a
 	 * través del parámetro relatedElements.
 	 * 
-	 * @param model:            modelo del cual se extraerán las relaciones.
-	 * @param element:          elemento inicial para verificar las asociaciones.
-	 * @param relatedRelations: lista usada para almacenar la cadena de relaciones
-	 *                          asociadas al parámetro element.
-	 * @param relatedElements:  lista usada para almacenar la cadena de elementos
-	 *                          asociados al parámetro element.
+	 * @param model:                  modelo del cual se extraerán las relaciones.
+	 * @param element:                elemento inicial para verificar las
+	 *                                asociaciones.
+	 * @param aspectRelatedRelations: lista usada para almacenar la cadena de
+	 *                                relaciones asociadas al parámetro element.
+	 * @param aspectRelatedElements:  lista usada para almacenar la cadena de
+	 *                                elementos asociados al parámetro element.
 	 */
-	//Los nombres de los parámetros difieren en el llamado y el metodo
-	private static void getAspectComponents(Model model, ElmDeclaration element, List<RelDeclaration> relatedRelations,
-			List<ElmDeclaration> relatedElements) {
+	private static void getAspectComponents(Model aspectModel, ElmDeclaration aspectElement,
+			List<RelDeclaration> aspectRelatedRelations, List<ElmDeclaration> aspectRelatedElements) {
 
 		List<RelDeclaration> modelRelations = new ArrayList<>();
-		Collections.copy(modelRelations, model.getRelations());
-
-		relatedElements.add(element);
+		modelRelations.addAll(aspectModel.getRelations());
+		aspectRelatedElements.add(aspectElement);
 
 		for (RelDeclaration relation : modelRelations) {
 			if (relation.getExp() instanceof Common) {
 
 				EList<ElmDeclaration> elements = ((CommonImpl) relation.getExp()).getElements().getValues();
-				if (elements.stream().anyMatch(e -> relatedElements.contains(e))) {
-					relatedElements.addAll(elements);
-					relatedRelations.add(relation);
-					modelRelations.remove(relation);
+
+				if (elements.stream().anyMatch(e -> aspectRelatedElements.contains(e))) {
+
+					elements.forEach(e -> {
+						if (!e.getName().equals(aspectElement.getName())) {
+							aspectRelatedElements.add(e);
+						}
+					});
+					relation = null;
 				}
 
 			} else if (relation.getExp() instanceof Pair) {
@@ -208,121 +210,63 @@ public class ModelOperations {
 				ElmDeclaration var1 = pair.getVar1();
 				ElmDeclaration var2 = pair.getVar2();
 
-				if (var1.getName().equals(element.getName()) || var2.getName().equals(element.getName())) {
-					relatedRelations.add(relation);
+				if (aspectRelatedElements.contains(var1) || aspectRelatedElements.contains(var2)) {
+					aspectRelatedElements.add(var1);
+					aspectRelatedElements.add(var2);
+					aspectRelatedRelations.add(relation);
+					relation = null;
 				}
 
 			} else if (relation.getExp() instanceof VarList) {
 
 				VarList varList = (VarList) relation.getExp();
 				ElmDeclaration var1 = varList.getVar1();
+				List<ElmDeclaration> list = varList.getList().getValues();
 
-				if (var1.getName().equals(element.getName()) || varList.getList().getValues().contains(element)) {
-					relatedRelations.add(relation);
+				if (aspectRelatedElements.contains(var1)
+						|| list.stream().anyMatch(e -> aspectRelatedElements.contains(e))) {
+					aspectRelatedElements.add(var1);
+					aspectRelatedElements.addAll(list);
+					aspectRelatedRelations.add(relation);
+					relation = null;
 				}
 
 			} else if (relation.getExp() instanceof Decomposition) {
 
 				Decomposition decomposition = (Decomposition) relation.getExp();
 				ElmDeclaration parent = decomposition.getParent();
+				List<ElmDeclaration> children = decomposition.getChildren().getValues();
 
-				if (parent.getName().equals(element.getName())
-						|| decomposition.getChildren().getValues().contains(element)) {
-					relatedRelations.add(relation);
+				if (aspectRelatedElements.contains(parent)
+						|| children.stream().anyMatch(e -> aspectRelatedElements.contains(e))) {
+					aspectRelatedElements.add(parent);
+					aspectRelatedElements.addAll(children);
+					aspectRelatedRelations.add(relation);
+					relation = null;
 				}
 
 			} else if (relation.getExp() instanceof Group) {
 
 				Group group = (Group) relation.getExp();
 				ElmDeclaration parent = group.getParent();
+				List<ElmDeclaration> children = group.getChildren().getValues();
 
-				if (parent.getName().equals(element.getName()) || group.getChildren().getValues().contains(element)) {
-					relatedRelations.add(relation);
+				if (aspectRelatedElements.contains(parent)
+						|| children.stream().anyMatch(e -> aspectRelatedElements.contains(e))) {
+					aspectRelatedElements.add(parent);
+					aspectRelatedElements.addAll(children);
+					aspectRelatedRelations.add(relation);
+					relation = null;
 				}
 			}
 		}
+		// aspectRelatedElements =
+		// aspectRelatedElements.stream().distinct().collect(Collectors.toList());
+		int i = 0;
 	}
 
 	private static ElmDeclaration findElement(Model model, String elementName) {
-
-		ElmDeclaration baseFeature = null;
-		boolean found = false;
-		for (RelDeclaration relation : model.getRelations()) {
-			if (relation.getExp() instanceof Common) {
-
-				EList<ElmDeclaration> elements = ((CommonImpl) relation.getExp()).getElements().getValues();
-				for (int i = 0; i < elements.size() && !found; i++) {
-					if (elements.get(i).getName().equals(elementName)) {
-						baseFeature = elements.get(i);
-						break;
-					}
-				}
-			} else if (relation.getExp() instanceof Pair) {
-
-				Pair pair = (Pair) relation.getExp();
-				ElmDeclaration var1 = pair.getVar1();
-				ElmDeclaration var2 = pair.getVar2();
-
-				if (var1.getName().equals(elementName)) {
-					baseFeature = var1;
-				} else if (var2.getName().equals(elementName)) {
-					baseFeature = var1;
-				}
-				break;
-
-			} else if (relation.getExp() instanceof VarList) {
-
-				VarList varList = (VarList) relation.getExp();
-				ElmDeclaration var1 = varList.getVar1();
-
-				if (var1.getName().equals(elementName)) {
-					baseFeature = var1;
-					break;
-				}
-
-				for (ElmDeclaration element : varList.getList().getValues()) {
-					if (element.getName().equals(elementName)) {
-						baseFeature = element;
-						break;
-					}
-				}
-
-			} else if (relation.getExp() instanceof Decomposition) {
-
-				Decomposition decomposition = (Decomposition) relation.getExp();
-				ElmDeclaration parent = decomposition.getParent();
-
-				if (parent.getName().equals(elementName)) {
-					baseFeature = parent;
-					break;
-				}
-
-				for (ElmDeclaration element : decomposition.getChildren().getValues()) {
-					if (element.getName().equals(elementName)) {
-						baseFeature = element;
-						break;
-					}
-				}
-
-			} else if (relation.getExp() instanceof Group) {
-
-				Group group = (Group) relation.getExp();
-				ElmDeclaration parent = group.getParent();
-
-				if (parent.getName().equals(elementName)) {
-					baseFeature = parent;
-					break;
-				}
-
-				for (ElmDeclaration element : group.getChildren().getValues()) {
-					if (element.getName().equals(elementName)) {
-						baseFeature = element;
-						break;
-					}
-				}
-			}
-		}
-		return baseFeature;
+		return model.getElements().stream().filter(element -> element.getName().equals(elementName)).findFirst().get();
 	}
 
 	/**
@@ -504,5 +448,79 @@ public class ModelOperations {
 			}
 		}
 		return null;
+	}
+
+	public static void printModel(Model model) {
+		StringBuilder modelString = new StringBuilder();
+		modelString.append("model " + model.getName() + "\n");
+		
+		modelString.append("  elements:\n");
+		for (ElmDeclaration element : model.getElements()) {
+			modelString.append("    " + element.getDataType() + " " + element.getName() + "\n");
+		}
+		
+		modelString.append("  relations:\n");
+//		for (RelDeclaration relation : model.getRelations()) {
+//			if (relation instanceof Common) {
+//
+//				Common common = (CommonImpl) relation.getExp());
+//				EList<ElmDeclaration> elements = (.getElements().getValues();
+//				modelString.append();
+//				for (ElmDeclaration element : elements) {
+//					
+//				}
+//				
+//
+//			} else if (relation instanceof Pair) {
+//
+//				Pair pair = (Pair) relation;
+//				String var1 = pair.getVar1().getName();
+//				String var2 = pair.getVar2().getName();
+//
+//				if (pair.getOperator().equals(HlvlBasicKeys.IMPLIES)) {
+//					relationString += hlvlFactory.getImplies(var1, var2);
+//				} else if (pair.getOperator().equals(HlvlBasicKeys.MUTEX)) {
+//					relationString += hlvlFactory.getMutex(var1, var2);
+//				}
+//
+//			} else if (relation instanceof VarList) {
+//
+//				VarList varList = (VarList) relation;
+//				String var1 = varList.getVar1().getName();
+//				List<String> list = new ArrayList<>();
+//
+//				varList.getList().getValues().forEach((element) -> list.add(element.getName()));
+//
+//				if (varList.getOperator().equals(HlvlBasicKeys.IMPLIES)) {
+//					relationString = hlvlFactory.getImpliesList(var1, list);
+//				} else if (varList.getOperator().equals(HlvlBasicKeys.MUTEX)) {
+//					relationString += hlvlFactory.getMutexList(var1, list);
+//				}
+//
+//			} else if (relation instanceof Decomposition) {
+//
+//				Decomposition decomposition = (Decomposition) relation;
+//				String min = decomposition.getMin() + "";
+//				String max = decomposition.getMax() + "";
+//				String parent = decomposition.getParent().getName();
+//				List<String> children = new ArrayList<>();
+//
+//				decomposition.getChildren().getValues().forEach((element) -> children.add(element.getName()));
+//
+//				relationString += hlvlFactory.getDecompositionList(parent, children, min, max);
+//
+//			} else if (relation instanceof Group) {
+//
+//				Group group = (Group) relation;
+//				String min = group.getMin() + "";
+//				String max = group.getMax().getValue();
+//				String parent = group.getParent().getName();
+//				List<String> children = new ArrayList<>();
+//
+//				group.getChildren().getValues().forEach((element) -> children.add(element.getName()));
+//
+//				relationString += hlvlFactory.getGroup(parent, children, min, max);
+//			}
+//		}
 	}
 }

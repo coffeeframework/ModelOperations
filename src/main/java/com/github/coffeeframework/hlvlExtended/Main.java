@@ -42,7 +42,7 @@ public class Main {
 				"   com1: common(sistemaOperativo)\n" + 
 				"   grp1: group(sistemaOperativo, [Windows, Linux, MacOS],[1,1])";
 		
-		String pc = "model PC extends \"SistemaOperativo.hlvl\",\"Procesador.hlvl\"\n" + 
+		String pcInheritance = "model PC extends \"SistemaOperativo.hlvl\",\"Procesador.hlvl\"\n" + 
 				"	elements:\n" + 
 				"		boolean pc\n" + 
 				"		boolean tarjetaGrafica\n" + 
@@ -51,12 +51,12 @@ public class Main {
 				"		boolean evga\n" + 
 				"	relations:\n" + 
 				"	com1: common(pc)\n" + 
-				"	mut1: mutex(Procesador.FOURGHz,evga)\n" + 
-				"	imp1: implies(Procesador.N4,msi)";
+				"	grp1: group(pc, [tarjetaGrafica], [1, 1])\n" +
+				"	grp2: group(tarjetaGrafica, [msi, asus, evga], [1, 1])";
 //		HLVLParser.runGenerator(test);
 //		System.out.println(HLVLParser.runGenerator(test));
 		
-		String[] modelsUris = {procesador,os, pc};
+		String[] modelsUris = {procesador,os, pcInheritance};
 
 		try {
 			Model[] models = ModelOperations.generateModels(modelsUris);
