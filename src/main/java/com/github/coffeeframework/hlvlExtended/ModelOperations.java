@@ -24,8 +24,39 @@ import com.coffee.hlvl.VarList;
 import com.coffee.hlvl.impl.CommonImpl;
 import com.github.coffeeframework.basickhlvlpackage.HlvlBasicKeys;
 
+/**
+ * 
+ * @author Sara Ortiz Drada
+ * @author Juan Diego Carvajal Castaño
+ * 
+ *         Version Control:
+ * 
+ *         September 17th 2020 - Documentation first version
+ * 
+ *         ModelOpertions class provides services to compose HLVL Variability
+ *         models
+ */
 public class ModelOperations {
 
+	/**
+	 * Allows to insert a chain of elements from a model (aspect model) below a
+	 * certain element of another model (base model), through an specified operator.
+	 * 
+	 * @param baseModel:         Model in which the elements will be inserted.
+	 * @param aspectModel:       Model from which a set of elements are going to be
+	 *                           inserted.
+	 * @param baseElementName:   Element from the base model where the elements will
+	 *                           be inserted.
+	 * @param aspectElementName: First element from the chain of element that will
+	 *                           be inserted in the base model.
+	 * @param operator:          Specifies the variability relation to be used to
+	 *                           relate the aspectElement and the baseElement.
+	 * @param index:             Number used to create an identifier for the
+	 *                           relation between aspectElement and the baseElement.
+	 * 
+	 * @return Returns the model baseModel where the chain of elements from
+	 *         aspectModel where inserted
+	 */
 	public static Model insert(Model baseModel, Model aspectModel, String baseElementName, String aspectElementName,
 			HLVLExtendedKeys operator, int index) {
 
@@ -42,6 +73,19 @@ public class ModelOperations {
 		return baseModel;
 	}
 
+	/**
+	 * Creates a Variability Relation between a base and aspect elements through an
+	 * specified operator.
+	 * 
+	 * @param baseElementName:   Element from the base model.
+	 * @param aspectElementName: Element from the aspect model.
+	 * @param operator:          Specifies the variability relation to be used to
+	 *                           relate the aspectElement and the baseElement.
+	 * @param index:             Number used to create an identifier for the
+	 *                           relation between aspectElement and baseElement.
+	 * @return Returns a RelDeclaration object that represent the relation between
+	 *         aspectElement and baseElement through the specified operator.
+	 */
 	private static RelDeclaration createJoinPoint(ElmDeclaration baseElement, ElmDeclaration aspectElement,
 			HLVLExtendedKeys operator, int index) {
 		RelDeclaration joinPoint = HlvlFactory.eINSTANCE.createRelDeclaration();
@@ -127,49 +171,12 @@ public class ModelOperations {
 		return joinPoint;
 	}
 
-	private static List<ElmDeclaration> getElements(List<RelDeclaration> aspectElementRelations) {
-
-		List<ElmDeclaration> elements = new ArrayList<>();
-
-		for (RelDeclaration relation : aspectElementRelations) {
-			if (relation.getExp() instanceof Common) {
-
-				elements.addAll(((CommonImpl) relation.getExp()).getElements().getValues());
-
-			} else if (relation instanceof Pair) {
-
-				Pair pair = (Pair) relation.getExp();
-				elements.add(pair.getVar1());
-				elements.add(pair.getVar2());
-
-			} else if (relation instanceof VarList) {
-
-				VarList varList = (VarList) relation.getExp();
-				elements.add(varList.getVar1());
-				elements.addAll(varList.getList().getValues());
-
-			} else if (relation instanceof Decomposition) {
-
-				Decomposition decomposition = (Decomposition) relation.getExp();
-				elements.add(decomposition.getParent());
-				elements.addAll(decomposition.getChildren().getValues());
-
-			} else if (relation instanceof Group) {
-
-				Group group = (Group) relation.getExp();
-				elements.add(group.getParent());
-				elements.addAll(group.getChildren().getValues());
-
-			}
-		}
-		return elements;
-	}
-
 	/**
-	 * Permite extraer del parámetro model: i. la cadena de relaciones asociadas al
-	 * parámetro element, es decir, encuentra toda la cadena de elementos
-	 * relacionados y retorna a través del parámetro relatedRelations todas las
-	 * relaciones asociadas a dichos elementos.
+	 * Permite extraer del parámetro model:
+	 * 
+	 * i. la cadena de relaciones asociadas al parámetro element, es decir,
+	 * encuentra toda la cadena de elementos relacionados y retorna a través del
+	 * parámetro relatedRelations todas las relaciones asociadas a dichos elementos.
 	 * 
 	 * ii. la cadena de elementos asociados al parámetro element y la retorna a
 	 * través del parámetro relatedElements.
@@ -260,9 +267,6 @@ public class ModelOperations {
 				}
 			}
 		}
-		// aspectRelatedElements =
-		// aspectRelatedElements.stream().distinct().collect(Collectors.toList());
-		int i = 0;
 	}
 
 	private static ElmDeclaration findElement(Model model, String elementName) {
@@ -270,11 +274,16 @@ public class ModelOperations {
 	}
 
 	/**
+	 * Compose an array of HLVL variability models performing an aggregation
+	 * operation. A new variability model is created where a new root element has a
+	 * parent-child relationship with the roots from the input models.
 	 * 
-	 * @param models
-	 * @param modelName
-	 * @return
-	 * @throws Exception
+	 * @param models:    the models to be composed.
+	 * @param modelName: a name for the aggregated model, this name will be used to
+	 *                   name the root element as well.
+	 * @return Returns the aggregated model.
+	 * @throws Exception if there are models needed but not given due to mechanisms
+	 *                   as inheritance or interfaces specified in the models.
 	 */
 	public static Model aggregate(Model[] models, String modelName) throws Exception {
 
@@ -293,6 +302,17 @@ public class ModelOperations {
 		return HLVLParser.getInstance().generateModel(aggregatedModel.toString());
 	}
 
+	/**
+	 * Adds the elements from an array of models to a variability model given as
+	 * argument in the form of an string.
+	 * 
+	 * @param aggregatedModel: the variability model where the elements will be
+	 *                         added.
+	 * @param modelName:       the name of the aggregated model. It will be used to
+	 *                         add the new root for the aggregated model as it is
+	 *                         specified for the aggregation operation.
+	 * @param models:          the models that are being aggregated.
+	 */
 	private static void addElements(StringBuilder aggregatedModel, String modelName, Model[] models) {
 
 		HLVLExtendedFactory hlvlFactory = new HLVLExtendedFactory();
@@ -310,6 +330,17 @@ public class ModelOperations {
 		}
 	}
 
+	/**
+	 * Adds the relations from an array of models to a variability model given as
+	 * argument in the form of an string.
+	 * 
+	 * @param aggregatedModel: the variability model where the elements will be
+	 *                         added.
+	 * @param modelName:       the name of the aggregated model. It will be used to
+	 *                         add the relation between the new root for the
+	 *                         aggregated and the roots from the input models.
+	 * @param models:          the models that are being aggregated.
+	 */
 	private static void addRelations(StringBuilder aggregatedModel, String modelName, Model[] models) {
 		HLVLExtendedFactory hlvlFactory = new HLVLExtendedFactory();
 
@@ -421,6 +452,17 @@ public class ModelOperations {
 		return missingModels;
 	}
 
+	/**
+	 * Creates model objects from an array of HLVL variability models represented as
+	 * strings.
+	 * 
+	 * @param modelsUris: array of HLVL variability models represented as strings.
+	 * 
+	 * @return Returns an array of model objects that represents the string models
+	 *         given as input.
+	 * @throws Exception if the content of the any of the models has syntactic
+	 *                   errors.
+	 */
 	public static Model[] generateModels(String[] modelsUris) throws Exception {
 
 		Model[] models = new Model[modelsUris.length];
@@ -453,12 +495,12 @@ public class ModelOperations {
 	public static void printModel(Model model) {
 		StringBuilder modelString = new StringBuilder();
 		modelString.append("model " + model.getName() + "\n");
-		
+
 		modelString.append("  elements:\n");
 		for (ElmDeclaration element : model.getElements()) {
 			modelString.append("    " + element.getDataType() + " " + element.getName() + "\n");
 		}
-		
+
 		modelString.append("  relations:\n");
 //		for (RelDeclaration relation : model.getRelations()) {
 //			if (relation instanceof Common) {
