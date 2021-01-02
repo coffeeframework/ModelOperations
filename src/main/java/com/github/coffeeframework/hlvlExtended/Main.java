@@ -8,9 +8,10 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 
-		String test = "		model empty\r\n" + "		elements:\r\n" + "		boolean A\r\n" + "		boolean B\r\n"
-				+ "		relations:\r\n" + "		r1: common(A,B)";
+		String test = "		model empty\n" + "		elements:\n" + "		boolean A\n" + "		boolean B\n"
+				+ "		relations:\n" + "		r1: common(A,B)";
 
+		
 		String procesador = "model Procesador\n" + 
 				"  elements:\n" + 
 				"   boolean procesador\n" + 
@@ -61,9 +62,9 @@ public class Main {
 		try {
 			Model[] models = ModelOperations.generateModels(modelsUris);
 //			Model model = ModelOperations.aggregate(models, "TestAggregation");
-			
-			Model mergedModel = ModelOperations.insert(models[2], models[1], "evga", "sistemaOperativo", HLVLExtendedKeys.MANDATORY_DECOMPOSITION, 0);
-			System.out.println(mergedModel.toString());
+			ModelOperations.merge(models, MergeMode.UNION);
+			//Model mergedModel = ModelOperations.insert(models[2], models[1], "evga", "sistemaOperativo", HLVLExtendedKeys.MANDATORY_DECOMPOSITION, 0);
+			//System.out.println(mergedModel);
 			int i = 0;
 		} catch (Exception e) {
 			e.printStackTrace();
