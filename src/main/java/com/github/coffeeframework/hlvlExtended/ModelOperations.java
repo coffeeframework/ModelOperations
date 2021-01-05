@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.coffee.generator.HLVLParser;
 import com.coffee.hlvl.Model;
+import com.coffee.parser.antlr.HlvlParser;
 
 /**
  * 
@@ -51,26 +52,6 @@ public class ModelOperations {
 		return null;
 	}
 
-	/**
-	 * Creates model objects from an array of HLVL variability models represented as
-	 * strings.
-	 * 
-	 * @param modelsUris: array of HLVL variability models represented as strings.
-	 * 
-	 * @return Returns an array of model objects that represents the string models
-	 *         given as input.
-	 * @throws Exception if the content of the any of the models has syntactic
-	 *                   errors.
-	 */
-	public static Model[] generateModels(String[] modelsUris) throws Exception {
-
-		Model[] models = new Model[modelsUris.length];
-		for (int i = 0; i < modelsUris.length; i++) {
-			models[i] = HLVLParser.getInstance().generateModel(modelsUris[i]);
-		}
-		return models;
-	}
-
 	// --------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------
@@ -78,8 +59,8 @@ public class ModelOperations {
 
 	public static String merge(Model[] models, MergeMode mode) {
 
-		String mergedDimacs = "";
-		List<List<List<Integer>>> dimacs = Merge.getDIMACSs(models);
+		List<List<Integer>> mergedDimacs;
+		List<List<List<Integer>>> dimacs = HLVLParser.getDIMACSs(models);
 
 		switch (mode) {
 		case UNION:

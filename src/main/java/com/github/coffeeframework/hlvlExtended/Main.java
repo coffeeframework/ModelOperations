@@ -60,9 +60,8 @@ public class Main {
 		String[] modelsUris = {procesador,os, pcInheritance};
 
 		try {
-			Model[] models = ModelOperations.generateModels(modelsUris);
+			// Model[] models = ModelOperations.generateModels(modelsUris);
 //			Model model = ModelOperations.aggregate(models, "TestAggregation");
-			ModelOperations.merge(models, MergeMode.UNION);
 			//Model mergedModel = ModelOperations.insert(models[2], models[1], "evga", "sistemaOperativo", HLVLExtendedKeys.MANDATORY_DECOMPOSITION, 0);
 			//System.out.println(mergedModel);
 			int i = 0;
