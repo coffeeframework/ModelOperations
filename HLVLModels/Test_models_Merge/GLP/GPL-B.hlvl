@@ -1,0 +1,74 @@
+model  GPL
+elements: 
+	boolean Base
+	boolean WithEdges
+	boolean WithNeighbors
+	boolean OnlyVertices
+	boolean Implementation
+	boolean Undirected
+	boolean Directed
+	boolean Gtp
+	boolean UndirectedOnlyVertices
+	boolean UndirectedWithNeighbors
+	boolean UndirectedWithEdges
+	boolean DirectedOnlyVertices
+	boolean DirectedWithNeighbors
+	boolean DirectedWithEdges
+	boolean HiddenGtp
+	boolean Unweighted
+	boolean Weighted
+	boolean Wgt
+	boolean WeightedWithEdges
+	boolean WeightOptions
+	boolean HiddenWgt
+	boolean DFS
+	boolean BFS
+	boolean Src
+	boolean MSTKruskal
+	boolean MSTPrim
+	boolean Cycle
+	boolean Connected
+	boolean Number
+	boolean Alg
+	boolean TestProg
+	boolean MainGpl
+	boolean GPL
+relations:
+	r0: common(GPL)
+	r1:decomposition(GPL,[MainGpl],[1,1])
+	r2:decomposition(MainGpl,[TestProg],[1,1])
+	r3:decomposition(MainGpl,[Alg],[1,1])
+	r4:decomposition(Alg,[Number],[0,1])
+	r5:decomposition(Alg,[Connected],[0,1])
+	r6:decomposition(Alg,[Cycle],[0,1])
+	r7:decomposition(Alg,[MSTPrim],[0,1])
+	r8:decomposition(Alg,[MSTKruskal],[0,1])
+	r9:group(Src,[BFS, DFS],[1,1])
+	r10:decomposition(MainGpl,[HiddenWgt],[1,1])
+	r11:decomposition(HiddenWgt,[WeightOptions],[1,1])
+	r12:decomposition(WeightOptions,[WeightedWithEdges],[0,1])
+	r13:group(Wgt,[Weighted, Unweighted],[1,1])
+	r14:decomposition(MainGpl,[Wgt],[1,1])
+	r15:group(HiddenGtp,[DirectedWithEdges, DirectedWithNeighbors, DirectedOnlyVertices, UndirectedWithEdges, UndirectedWithNeighbors, UndirectedOnlyVertices],[1,1])
+	r16:decomposition(MainGpl,[HiddenGtp],[1,1])
+	r17:group(Gtp,[Directed, Undirected],[1,1])
+	r18:decomposition(MainGpl,[Gtp],[1,1])
+	r19:group(Implementation,[OnlyVertices, WithNeighbors, WithEdges],[1,1])
+	r20:decomposition(MainGpl,[Implementation],[1,1])
+	r21:decomposition(MainGpl,[Base],[1,1])
+	r22:expression(((Number) => ((Gtp) AND (Src))))
+	r23:expression(((Connected) => ((Undirected) AND (Src))))
+	r24:expression(((Cycle) => ((Gtp) AND (DFS))))
+	r25:expression((((MSTKruskal) OR (MSTPrim)) => ((Undirected) AND (Weighted))))
+	r26:expression((((MSTKruskal) OR (MSTPrim)) => (~ ((MSTKruskal) AND (MSTPrim)))))
+	r27:expression((((WithEdges) AND (Weighted)) => (WeightedWithEdges)))
+	r28:expression((((OnlyVertices) AND (Directed)) => (DirectedOnlyVertices)))
+	r29:expression((((WithNeighbors) AND (Directed)) => (DirectedWithNeighbors)))
+	r30:expression((((WithEdges) AND (Directed)) => (DirectedWithEdges)))
+	r31:expression((((OnlyVertices) AND (Undirected)) => (UndirectedOnlyVertices)))
+	r32:expression((((WithNeighbors) AND (Undirected)) => (UndirectedWithNeighbors)))
+	r33:expression((((WithEdges) AND (Undirected)) => (UndirectedWithEdges)))
+	r34:expression(((~ (Alg)) OR (MSTKruskal)))
+	r35:expression(((~ (Alg)) OR (MSTKruskal)))
+	r36:decomposition(MainGpl,[Src],[0,1])
+

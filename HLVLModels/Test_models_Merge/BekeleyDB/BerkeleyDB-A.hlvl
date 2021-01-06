@@ -1,0 +1,115 @@
+model  BerkeleyDB
+elements: 
+	boolean BASE
+	boolean featureTruncateDb
+	boolean featureDeleteDb
+	boolean FDbOperation
+	boolean featureCheckLeaks
+	boolean dummyFeatureLocking
+	boolean featureTransaction
+	boolean featureFSync
+	boolean featureLatch
+	boolean FConcurrency
+	boolean featureMemoryBudget
+	boolean featureStatisticsTransaction
+	boolean featureStatisticsSequence
+	boolean featureStatisticsPreload
+	boolean featureStatisticsLock
+	boolean featureStatisticsDatabase
+	boolean featureStatisticsEnvBase
+	boolean featureStatisticsEnvCaching
+	boolean featureStatisticsEnvCheckpointer
+	boolean featureStatisticsEnvCleaner
+	boolean featureStatisticsEnvEvictor
+	boolean featureStatisticsEnvFSync
+	boolean featureStatisticsEnvINCompressor
+	boolean featureStatisticsEnvLog
+	boolean EnvStats
+	boolean FStatisticsFeatures
+	boolean Statistics
+	boolean FStatistics
+	boolean featureCleanerDaemon
+	boolean featureLookAheadCache
+	boolean Cleaner
+	boolean featureCheckpointerDaemon
+	boolean featureCustomizableCheckpointerBytes
+	boolean featureCustomizableCheckpointerTime
+	boolean Checkpointer
+	boolean featureEnvironmentLock
+	boolean featureHandleFullDiscError
+	boolean featureFileHandleCache
+	boolean featureChecksum
+	boolean FPersistencyFeatures
+	boolean Persistency
+	boolean FPersistency
+	boolean featureLoggingBase
+	boolean featureLoggingSevere
+	boolean featureLoggingConfig
+	boolean featureLoggingInfo
+	boolean featureLoggingFine
+	boolean featureLoggingFiner
+	boolean featureLoggingFinest
+	boolean featureLoggingDbLog
+	boolean Logging
+	boolean FLogging
+	boolean BerkeleyDB
+	boolean BerkeleyDb
+relations:
+	r0: common(BerkeleyDb)
+	r1:decomposition(BerkeleyDb,[BerkeleyDB],[1,1])
+	r2:decomposition(FLogging,[Logging],[1,1])
+	r3:decomposition(Logging,[featureLoggingDbLog],[0,1])
+	r4:decomposition(Logging,[featureLoggingFinest],[0,1])
+	r5:decomposition(Logging,[featureLoggingFiner],[0,1])
+	r6:decomposition(Logging,[featureLoggingFine],[0,1])
+	r7:decomposition(Logging,[featureLoggingInfo],[0,1])
+	r8:decomposition(Logging,[featureLoggingConfig],[0,1])
+	r9:decomposition(Logging,[featureLoggingSevere],[0,1])
+	r10:decomposition(Logging,[featureLoggingBase],[1,1])
+	r11:decomposition(BerkeleyDB,[FPersistency],[1,1])
+	r12:decomposition(FPersistency,[Persistency],[1,1])
+	r13:group(FPersistencyFeatures,[featureChecksum, featureFileHandleCache, featureHandleFullDiscError, featureEnvironmentLock, Checkpointer, Cleaner],[1,*])
+	r14:decomposition(Checkpointer,[featureCustomizableCheckpointerTime],[0,1])
+	r15:decomposition(Checkpointer,[featureCustomizableCheckpointerBytes],[0,1])
+	r16:decomposition(Checkpointer,[featureCheckpointerDaemon],[0,1])
+	r17:decomposition(Cleaner,[featureLookAheadCache],[0,1])
+	r18:decomposition(Cleaner,[featureCleanerDaemon],[0,1])
+	r19:decomposition(FStatistics,[Statistics],[1,1])
+	r20:group(FStatisticsFeatures,[EnvStats, featureStatisticsDatabase, featureStatisticsLock, featureStatisticsPreload, featureStatisticsSequence, featureStatisticsTransaction],[1,*])
+	r21:decomposition(Statistics,[FStatisticsFeatures],[1,1])
+	r22:decomposition(EnvStats,[featureStatisticsEnvLog],[0,1])
+	r23:decomposition(EnvStats,[featureStatisticsEnvINCompressor],[0,1])
+	r24:decomposition(EnvStats,[featureStatisticsEnvFSync],[0,1])
+	r25:decomposition(EnvStats,[featureStatisticsEnvEvictor],[0,1])
+	r26:decomposition(EnvStats,[featureStatisticsEnvCleaner],[0,1])
+	r27:decomposition(EnvStats,[featureStatisticsEnvCheckpointer],[0,1])
+	r28:decomposition(EnvStats,[featureStatisticsEnvCaching],[0,1])
+	r29:decomposition(EnvStats,[featureStatisticsEnvBase],[1,1])
+	r30:decomposition(BerkeleyDB,[featureMemoryBudget],[0,1])
+	r31:group(FConcurrency,[featureLatch, featureFSync, featureTransaction, dummyFeatureLocking, featureCheckLeaks],[1,*])
+	r32:group(FDbOperation,[featureDeleteDb, featureTruncateDb],[1,*])
+	r33:decomposition(BerkeleyDB,[BASE],[1,1])
+	r34:expression(((featureCheckLeaks) => (featureStatisticsLock)))
+	r35:expression(((featureCustomizableCheckpointerBytes) => (featureCustomizableCheckpointerTime)))
+	r36:expression(((featureLoggingSevere) => (featureEnvironmentLock)))
+	r37:expression(((featureLoggingInfo) => ((featureChecksum) AND (featureMemoryBudget))))
+	r38:expression((((featureLoggingBase) OR (featureLoggingFinest)) => (featureTransaction)))
+	r39:expression((((featureStatisticsLock) OR (featureStatisticsTransaction)) => (dummyFeatureLocking)))
+	r40:expression(((featureStatisticsEnvFSync) => (featureFSync)))
+	r41:expression(((featureStatisticsTransaction) => (featureTransaction)))
+	r42:expression(((featureTransaction) => ((dummyFeatureLocking) AND ((featureDeleteDb) AND (featureTruncateDb)))))
+	r43:expression(((featureTruncateDb) => (featureDeleteDb)))
+	r44:expression(((~ (featureLookAheadCache)) OR (featureMemoryBudget)))
+	r45:expression(((~ (featureStatisticsEnvCaching)) OR (featureMemoryBudget)))
+	r46:expression(((~ (featureDeleteDb)) OR (featureMemoryBudget)))
+	r47:expression(((~ (featureLatch)) OR (featureCheckLeaks)))
+	r48:expression(((~ (featureLatch)) OR (featureFileHandleCache)))
+	r49:expression(((~ (featureLatch)) OR (featureFSync)))
+	r50:expression(((~ (featureLatch)) OR (featureTruncateDb)))
+	r51:expression(((~ (featureMemoryBudget)) OR (featureLatch)))
+	r52:expression(((~ (featureStatisticsEnvEvictor)) OR (featureMemoryBudget)))
+	r53:decomposition(BerkeleyDB,[FLogging],[0,1])
+	r54:decomposition(BerkeleyDB,[FStatistics],[0,1])
+	r55:decomposition(BerkeleyDB,[FConcurrency],[0,1])
+	r56:decomposition(BerkeleyDB,[FDbOperation],[0,1])
+	r57:decomposition(Persistency,[FPersistencyFeatures],[0,1])

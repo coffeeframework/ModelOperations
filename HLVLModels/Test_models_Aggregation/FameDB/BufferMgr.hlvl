@@ -1,0 +1,19 @@
+model  BufferMgr
+elements: 
+	boolean InMemory
+	boolean LFU
+	boolean LRU
+	boolean PageRepl
+	boolean Dynamic
+	boolean Static
+	boolean MemAlloc
+	boolean Persistent
+	boolean BufferMgr
+relations:
+	r0:group(BufferMgr,[Persistent, InMemory],[1,1])
+	r1: common(BufferMgr)
+	r2:group(MemAlloc,[Static, Dynamic],[1,1])
+	r3:decomposition(Persistent,[MemAlloc],[1,1])
+	r4:group(PageRepl,[LRU, LFU],[1,1])
+	r5:decomposition(Persistent,[PageRepl],[1,1])
+

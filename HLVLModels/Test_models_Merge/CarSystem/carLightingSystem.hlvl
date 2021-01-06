@@ -1,0 +1,55 @@
+model  carLightingSystem
+elements: 
+	boolean thirdStopLamp
+	boolean rearFogLamps
+	boolean stopLamps
+	boolean xenon_RB
+	boolean halogen_RB
+	boolean reverseBeam
+	boolean rearLamps
+	boolean amberRearSideLights
+	boolean redRearSideLights
+	boolean rearSideLights
+	boolean amberFrontSideLights
+	boolean whiteFrontSideLights
+	boolean frontSideLights
+	boolean sideLamps
+	boolean DRLsusingLowBeams
+	boolean DRLsUsingParkingLights
+	boolean independentDRLs
+	boolean daytimeRunningLights
+	boolean xenon_LB
+	boolean halogen_LB
+	boolean lowBeams
+	boolean combined_HB_LB
+	boolean xenon_HB
+	boolean halogen_HB
+	boolean mercury_HB
+	boolean highBeams
+	boolean headLamps
+	boolean carLighthing
+	boolean carSystem
+relations:
+	r0: common(carSystem)
+	r1:decomposition(carLighthing,[headLamps],[1,1])
+	r2:group(highBeams,[mercury_HB, halogen_HB, xenon_HB],[1,1])
+	r3:decomposition(headLamps,[highBeams],[1,1])
+	r4:decomposition(xenon_HB,[combined_HB_LB],[1,1])
+	r5:group(lowBeams,[halogen_LB, xenon_LB],[1,1])
+	r6:decomposition(headLamps,[lowBeams],[1,1])
+	r7:group(daytimeRunningLights,[independentDRLs, DRLsUsingParkingLights, DRLsusingLowBeams],[1,1])
+	r8:group(frontSideLights,[whiteFrontSideLights, amberFrontSideLights],[1,1])
+	r9:group(rearSideLights,[redRearSideLights, amberRearSideLights],[1,1])
+	r10:decomposition(carLighthing,[rearLamps],[1,1])
+	r11:group(reverseBeam,[halogen_RB, xenon_RB],[1,1])
+	r12:decomposition(rearLamps,[reverseBeam],[1,1])
+	r13:decomposition(rearLamps,[stopLamps],[1,1])
+	r14:decomposition(rearLamps,[rearFogLamps],[0,1])
+	r15:expression(((combined_HB_LB) => (xenon_LB)))
+	r16:decomposition(carLighthing,[sideLamps],[0,1])
+	r17:decomposition(carLighthing,[thirdStopLamp],[0,1])
+	r18:decomposition(headLamps,[daytimeRunningLights],[0,1])
+	r19:decomposition(sideLamps,[frontSideLights],[0,1])
+	r20:decomposition(sideLamps,[rearSideLights],[0,1])
+	r21:decomposition(carSystem,[carLighthing],[1,1])
+	

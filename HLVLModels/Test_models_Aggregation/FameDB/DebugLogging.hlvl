@@ -1,0 +1,6 @@
+model  DebugLogging
+elements: 
+	boolean DebugLogging
+relations:
+	r0: common(DebugLogging)
+

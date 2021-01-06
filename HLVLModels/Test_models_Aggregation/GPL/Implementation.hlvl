@@ -1,0 +1,10 @@
+model  Implementation
+elements: 
+	boolean WithEdges
+	boolean WithNeighbors
+	boolean OnlyVertices
+	boolean Implementation
+relations:
+	r0:group(Implementation,[OnlyVertices, WithNeighbors, WithEdges],[1,1])
+	r1: common(Implementation)
+

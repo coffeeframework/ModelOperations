@@ -1,11 +1,15 @@
 package com.github.coffeeframework.hlvlExtended;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.ReadOnlyFileSystemException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,7 +77,7 @@ public class Merge {
 
 	public static void main(String[] args) {
 
-		String fameDBA = "model  GPLA\n" + "elements: \n" + "	boolean WithEdges\n" + "	boolean WithNeighbors\n"
+		String GPLA = "model  GPLA\n" + "elements: \n" + "	boolean WithEdges\n" + "	boolean WithNeighbors\n"
 				+ "	boolean OnlyVertices\n" + "	boolean Implementation\n" + "	boolean Undirected\n"
 				+ "	boolean Directed\n" + "	boolean Gtp\n" + "	boolean UndirectedOnlyVertices\n"
 				+ "	boolean UndirectedWithNeighbors\n" + "	boolean UndirectedWithEdges\n"
@@ -115,7 +119,7 @@ public class Merge {
 				+ "	r35:expression(((~ (MSTKruskal)) OR (WeightedOnlyVertices)))\n"
 				+ "	r36:decomposition(MainGpl,[Src],[0,1])\n" + "	r37:decomposition(Alg,[StrongC],[0,1])\n";
 
-		String fameDBB = "model  GPLB\n" + "elements: \n" + "	boolean Base\n" + "	boolean WithEdges\n"
+		String GPLB = "model  GPLB\n" + "elements: \n" + "	boolean Base\n" + "	boolean WithEdges\n"
 				+ "	boolean WithNeighbors\n" + "	boolean OnlyVertices\n" + "	boolean Implementation\n"
 				+ "	boolean Undirected\n" + "	boolean Directed\n" + "	boolean Gtp\n"
 				+ "	boolean UndirectedOnlyVertices\n" + "	boolean UndirectedWithNeighbors\n"
@@ -244,7 +248,7 @@ public class Merge {
 				"	boolean InMemory\n" + 
 				"	boolean LFU\n" + 
 				"	boolean LRU\n" + 
-				"	boolean PageRepl\n" + 
+				"	boolean PageRepl b \n" + 
 				"	boolean Dynamic\n" + 
 				"	boolean Static\n" + 
 				"	boolean MemAlloc\n" + 
@@ -270,21 +274,98 @@ public class Merge {
 				"	r12:decomposition(Storage,[API],[1,1])\n" + 
 				"	r13:group(Index,[BTree, Unindexed],[1,1])\n" + 
 				"	r14:decomposition(Storage,[Index],[1,1])\n";
-		String[] modelUris = { fameDB};
+		
+		 
+		
 		
 		try {
-
+			
+			String[] originalModels = { 
+					readFile("./HLVLModels/Original_models/FameDB.hlvl"),
+					readFile("./HLVLModels/Original_models/BerkeleyDB.hlvl"),
+					readFile("./HLVLModels/Original_models/GPL.hlvl"),
+					readFile("./HLVLModels/Original_models/carSystem.hlvl")
+			};
+			
+			String[] aggregationBerkeleyDB = { 
+					readFile("./HLVLModels/Test_models_Aggregation/FBtree.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FConcurrency.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FDbOperation.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FLogging.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FPersistency.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FStatistics.hlvl"),
+			};
+			
+			String[] aggregationFameDB = { 
+					readFile("./HLVLModels/Test_models_Aggregation/BufferMgr.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/DebugLogging.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/OS.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/Storage.hlvl")
+			};
+			
+			String[] aggregationGPL = { 
+					readFile("./HLVLModels/Test_models_Aggregation/Alg.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/Gtp.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/HiddenGtp.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/HiddenWgt.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/Implementation.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/Src.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/Wgt.hlvl"),
+			};
+			
+			String[] mergeBerkeleyDB = { 
+					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-A.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-B.hlvl"),
+			};
+			
+			String[] mergeFameDB = { 
+					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-A.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-B.hlvl"),
+			};
+			
+			String[] mergeGPL = { 
+					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
+			};
+			
+			String[] mergeCarSystem = { 
+					readFile("./HLVLModels/Test_models_Merge/CarSystem/carLightingSystem.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/CarSystem/carPeripherySupervisionSystem.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation.hlvl"),
+			};
+			
+			String[] mergeEShop = { 
+					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-A.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-B.hlvl"),
+			};
+			
+			String[] modelUris = { fameDB };
+			
 			HLVLParser parser = HLVLParser.getInstance();
 			Model[] models = parser.generateModels(modelUris);
 			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
 			
 			System.out.println(DIMACS.toString(currentDimacs.get(0)));
-		//	System.out.println(DIMACS.toString(union(currentDimacs)));
+			System.out.println(DIMACS.toString(union(currentDimacs)));
+			
 		} catch (
 
 		Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static String readFile(String path) throws FileNotFoundException, IOException {
+	      String content = "";
+	      FileReader fr = new FileReader(path);
+	      BufferedReader br = new BufferedReader(fr);
+	      String line;
+	      while((line = br.readLine())!=null) {
+	          content += line + "\n";
+	      }
+	      br.close();
+	      fr.close();
+	      return content;
 	}
 }

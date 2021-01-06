@@ -1,0 +1,14 @@
+model  HiddenWgt
+elements: 
+	boolean WeightedOnlyVertices
+	boolean WeightedWithNeighbors
+	boolean WeightedWithEdges
+	boolean WeightOptions
+	boolean HiddenWgt
+relations:
+	r0: common(HiddenWgt)
+	r1:decomposition(HiddenWgt,[WeightOptions],[1,1])
+	r2:decomposition(WeightOptions,[WeightedWithEdges],[0,1])
+	r3:decomposition(WeightOptions,[WeightedWithNeighbors],[0,1])
+	r4:decomposition(WeightOptions,[WeightedOnlyVertices],[0,1])
+
