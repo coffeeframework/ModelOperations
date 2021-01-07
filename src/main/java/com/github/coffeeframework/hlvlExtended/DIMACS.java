@@ -38,18 +38,21 @@ public class DIMACS {
 		return result;
 	}
 
-	private static List<List<Integer>> clausesDisjunction(List<Integer> firstClause, List<Integer> secondClause) {
+	private static List<Integer> clausesDisjunction(List<Integer> firstClause, List<Integer> secondClause) {
 
-		List<List<Integer>> result = new ArrayList<>();
-		for (Integer firstClauseVariable : firstClause) {
-			for (Integer secondClauseVariable : secondClause) {
-				List<Integer> newClause = new ArrayList<>();
-				newClause.add(firstClauseVariable);
-				newClause.add(secondClauseVariable);
-				result.add(newClause);
-			}
-		}
+//		List<List<Integer>> result = new ArrayList<>();
+//		for (Integer firstClauseVariable : firstClause) {
+//			for (Integer secondClauseVariable : secondClause) {
+//				List<Integer> newClause = new ArrayList<>();
+//				newClause.add(firstClauseVariable);
+//				newClause.add(secondClauseVariable);
+//				result.add(newClause);
+//			}
+//		}
 
+		List<Integer> result = new ArrayList<>();
+		firstClause.addAll(secondClause);
+		result.addAll(firstClause);
 		return result;
 	}
 

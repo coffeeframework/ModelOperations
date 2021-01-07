@@ -248,7 +248,7 @@ public class Merge {
 				"	boolean InMemory\n" + 
 				"	boolean LFU\n" + 
 				"	boolean LRU\n" + 
-				"	boolean PageRepl b \n" + 
+				"	boolean PageRepl\n" + 
 				"	boolean Dynamic\n" + 
 				"	boolean Static\n" + 
 				"	boolean MemAlloc\n" + 
@@ -275,9 +275,6 @@ public class Merge {
 				"	r13:group(Index,[BTree, Unindexed],[1,1])\n" + 
 				"	r14:decomposition(Storage,[Index],[1,1])\n";
 		
-		 
-		
-		
 		try {
 			
 			String[] originalModels = { 
@@ -288,29 +285,29 @@ public class Merge {
 			};
 			
 			String[] aggregationBerkeleyDB = { 
-					readFile("./HLVLModels/Test_models_Aggregation/FBtree.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FConcurrency.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FDbOperation.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FLogging.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FPersistency.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FStatistics.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FBtree.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FConcurrency.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FDbOperation.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FLogging.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FPersistency.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FStatistics.hlvl"),
 			};
 			
 			String[] aggregationFameDB = { 
-					readFile("./HLVLModels/Test_models_Aggregation/BufferMgr.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/DebugLogging.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/OS.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Storage.hlvl")
+					readFile("./HLVLModels/Test_models_Aggregation/FameDB/BufferMgr.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FameDB/DebugLogging.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FameDB/OS.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/FameDB/Storage.hlvl")
 			};
 			
 			String[] aggregationGPL = { 
-					readFile("./HLVLModels/Test_models_Aggregation/Alg.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Gtp.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/HiddenGtp.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/HiddenWgt.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Implementation.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Src.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Wgt.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/Alg.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/Gtp.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/HiddenGtp.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/HiddenWgt.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/Implementation.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/Src.hlvl"),
+					readFile("./HLVLModels/Test_models_Aggregation/GPL/Wgt.hlvl"),
 			};
 			
 			String[] mergeBerkeleyDB = { 
@@ -324,14 +321,14 @@ public class Merge {
 			};
 			
 			String[] mergeGPL = { 
-					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl")
+					// readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
 			};
 			
 			String[] mergeCarSystem = { 
 					readFile("./HLVLModels/Test_models_Merge/CarSystem/carLightingSystem.hlvl"),
 					readFile("./HLVLModels/Test_models_Merge/CarSystem/carPeripherySupervisionSystem.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation.hlvl"),
+					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation_USA.hlvl"),
 			};
 			
 			String[] mergeEShop = { 
@@ -339,14 +336,14 @@ public class Merge {
 					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-B.hlvl"),
 			};
 			
-			String[] modelUris = { fameDB };
+			String[] modelUris = {  };
 			
 			HLVLParser parser = HLVLParser.getInstance();
-			Model[] models = parser.generateModels(modelUris);
+			Model[] models = parser.generateModels(mergeGPL);
 			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
 			
 			System.out.println(DIMACS.toString(currentDimacs.get(0)));
-			System.out.println(DIMACS.toString(union(currentDimacs)));
+			// System.out.println(DIMACS.toString(union(currentDimacs)));
 			
 		} catch (
 

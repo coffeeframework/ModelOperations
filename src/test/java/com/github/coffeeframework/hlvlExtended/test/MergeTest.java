@@ -21,10 +21,12 @@ class MergeTest {
 	void test() {
 		ISolver solver = SolverFactory.newDefault();
 		solver.setTimeout(3600); // 1 hour timeout
+		
 		Reader reader = new DimacsReader(solver);
 		PrintWriter out = new PrintWriter(System.out, true);
 		try {
 			IProblem problem = reader.parseInstance("./test/fameDB.txt");
+			
 			if (problem.isSatisfiable()) {
 				System.out.println("Satisfiable !");
 				reader.decode(problem.model(), out);
