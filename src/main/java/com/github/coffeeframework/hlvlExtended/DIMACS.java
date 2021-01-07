@@ -11,33 +11,6 @@ import com.coffee.generator.HLVLParser;
 
 public class DIMACS {
 
-	public static List<List<Integer>> dimacsDisjunction(List<List<List<Integer>>> modelsDimacs) {
-		List<List<Integer>> result = new ArrayList<>();
-		HashMap<String, String> clausesHash = new HashMap<>();
-		for (int i = 0; i < modelsDimacs.size() - 1; i++) {
-			List<List<Integer>> firstDimacs = modelsDimacs.get(i);
-			List<List<Integer>> secondDimacs = modelsDimacs.get(i + 1);
-
-			for (int j = 0; j < firstDimacs.size(); j++) {
-				for (int j2 = 0; j2 < secondDimacs.size(); j2++) {
-					List<List<Integer>> dimacsList = clausesDisjunction(firstDimacs.get(j), secondDimacs.get(j2));
-					dimacsList.forEach(clause -> {
-						StringBuilder sClause = new StringBuilder();
-						for (Integer variable : clause) {
-							sClause.append(variable);
-						}
-						if (!clausesHash.containsKey(sClause.toString())) {
-							result.add(clause);
-							clausesHash.put(sClause.toString(), "");
-							clausesHash.put(sClause.reverse().toString(), "");
-						}
-					});
-				}
-			}
-		}
-		return result;
-	}
-
 	private static List<Integer> clausesDisjunction(List<Integer> firstClause, List<Integer> secondClause) {
 
 //		List<List<Integer>> result = new ArrayList<>();
