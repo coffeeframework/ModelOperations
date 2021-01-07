@@ -280,72 +280,73 @@ public class Merge {
 		
 		try {
 			
-			String[] originalModels = { 
-					readFile("./HLVLModels/Original_models/FameDB.hlvl"),
-					readFile("./HLVLModels/Original_models/BerkeleyDB.hlvl"),
-					readFile("./HLVLModels/Original_models/GPL.hlvl"),
-					readFile("./HLVLModels/Original_models/carSystem.hlvl")
-			};
+//			String[] originalModels = { 
+//					readFile("./HLVLModels/Original_models/FameDB.hlvl"),
+//					readFile("./HLVLModels/Original_models/BerkeleyDB.hlvl"),
+//					readFile("./HLVLModels/Original_models/GPL.hlvl"),
+//					readFile("./HLVLModels/Original_models/carSystem.hlvl")
+//			};
+//			
+//			String[] aggregationBerkeleyDB = { 
+//					readFile("./HLVLModels/Test_models_Aggregation/FBtree.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/FConcurrency.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/FDbOperation.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/FLogging.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/FPersistency.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/FStatistics.hlvl"),
+//			};
+//			
+//			String[] aggregationFameDB = { 
+//					readFile("./HLVLModels/Test_models_Aggregation/BufferMgr.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/DebugLogging.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/OS.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/Storage.hlvl")
+//			};
+//			
+//			String[] aggregationGPL = { 
+//					readFile("./HLVLModels/Test_models_Aggregation/Alg.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/Gtp.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/HiddenGtp.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/HiddenWgt.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/Implementation.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/Src.hlvl"),
+//					readFile("./HLVLModels/Test_models_Aggregation/Wgt.hlvl"),
+//			};
+//			
+//			String[] mergeBerkeleyDB = { 
+//					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-A.hlvl"),
+//					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-B.hlvl"),
+//			};
+//			
+//			String[] mergeFameDB = { 
+//					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-A.hlvl"),
+//					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-B.hlvl"),
+//			};
+//			
+//			String[] mergeGPL = { 
+//					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl"),
+//					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
+//			};
+//			
+//			String[] mergeCarSystem = { 
+//					readFile("./HLVLModels/Test_models_Merge/CarSystem/carLightingSystem.hlvl"),
+//					readFile("./HLVLModels/Test_models_Merge/CarSystem/carPeripherySupervisionSystem.hlvl"),
+//					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation.hlvl"),
+//			};
+//			
+//			String[] mergeEShop = { 
+//					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-A.hlvl"),
+//					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-B.hlvl"),
+//			};
 			
-			String[] aggregationBerkeleyDB = { 
-					readFile("./HLVLModels/Test_models_Aggregation/FBtree.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FConcurrency.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FDbOperation.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FLogging.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FPersistency.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FStatistics.hlvl"),
-			};
-			
-			String[] aggregationFameDB = { 
-					readFile("./HLVLModels/Test_models_Aggregation/BufferMgr.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/DebugLogging.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/OS.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Storage.hlvl")
-			};
-			
-			String[] aggregationGPL = { 
-					readFile("./HLVLModels/Test_models_Aggregation/Alg.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Gtp.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/HiddenGtp.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/HiddenWgt.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Implementation.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Src.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/Wgt.hlvl"),
-			};
-			
-			String[] mergeBerkeleyDB = { 
-					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-B.hlvl"),
-			};
-			
-			String[] mergeFameDB = { 
-					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-B.hlvl"),
-			};
-			
-			String[] mergeGPL = { 
-					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
-			};
-			
-			String[] mergeCarSystem = { 
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/carLightingSystem.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/carPeripherySupervisionSystem.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation.hlvl"),
-			};
-			
-			String[] mergeEShop = { 
-					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-B.hlvl"),
-			};
-			
-			String[] modelUris = { fameDB };
+			String[] modelUris = { A,B };
 			
 			HLVLParser parser = HLVLParser.getInstance();
 			Model[] models = parser.generateModels(modelUris);
 			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
 			
 			System.out.println(DIMACS.toString(currentDimacs.get(0)));
+			System.out.println(DIMACS.toString(currentDimacs.get(1)));
 			System.out.println(DIMACS.toString(union(currentDimacs)));
 			
 		} catch (

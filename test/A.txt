@@ -1,0 +1,7 @@
+c
+c DIMACS code generated using the Coffee framework
+c
+p cnf 2 3
+1 0
+1 -2 0
+-1 2 0

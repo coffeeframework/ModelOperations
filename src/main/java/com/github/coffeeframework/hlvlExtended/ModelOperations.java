@@ -59,7 +59,7 @@ public class ModelOperations {
 
 	public static String merge(Model[] models, MergeMode mode) {
 
-		List<List<Integer>> mergedDimacs;
+		List<List<Integer>> mergedDimacs = null;
 		List<List<List<Integer>>> dimacs = HLVLParser.getDIMACSs(models);
 
 		switch (mode) {
@@ -78,7 +78,7 @@ public class ModelOperations {
 		default:
 			break;
 		}
-		return null;
+		return DIMACS.toString(mergedDimacs);
 	}
 
 }
