@@ -1,0 +1,30 @@
+model  FMVSSRegulation_USA
+elements: 
+	boolean redRearSideLights
+	boolean amberFrontSideLights
+	boolean sideLights
+	boolean automatedLevelingSystem
+	boolean xenon_LB
+	boolean halogen_LB
+	boolean lowBeams
+	boolean xenon_HB
+	boolean halogen_HB
+	boolean highBeams
+	boolean headLights
+	boolean FMVSSRegulation_USA
+	boolean carSystem
+relations:
+	r0: common(carSystem)
+	r1:group(highBeams,[halogen_HB, xenon_HB],[1,1])
+	r2:decomposition(lowBeams,[halogen_LB],[0,1])
+	r3:decomposition(lowBeams,[xenon_LB],[0,1])
+	r4:decomposition(headLights,[automatedLevelingSystem],[0,1])
+	r5:decomposition(sideLights,[amberFrontSideLights],[0,1])
+	r6:decomposition(sideLights,[redRearSideLights],[0,1])
+	r7:expression((((xenon_HB) AND (xenon_LB)) => (automatedLevelingSystem)))
+	r8:decomposition(FMVSSRegulation_USA,[headLights],[0,1])
+	r9:decomposition(headLights,[highBeams],[0,1])
+	r10:decomposition(headLights,[lowBeams],[0,1])
+	r11:decomposition(FMVSSRegulation_USA,[sideLights],[0,1])
+	r12:decomposition(carSystem,[FMVSSRegulation_USA],[0,1])
+	

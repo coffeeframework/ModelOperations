@@ -1,0 +1,26 @@
+model  FBtree
+elements: 
+	boolean featureEvictor
+	boolean featureEvictorDaemon
+	boolean featureCriticalEviction
+	boolean Evictor
+	boolean FEvictor
+	boolean featureINCompressor
+	boolean featureTreeVisitor
+	boolean featureVerifier
+	boolean BTree
+	boolean FBtree
+relations:
+	r0: common(FBtree)
+	r1:decomposition(FBtree,[BTree],[1,1])
+	r2:decomposition(BTree,[featureVerifier],[0,1])
+	r3:decomposition(BTree,[featureTreeVisitor],[0,1])
+	r4:decomposition(BTree,[featureINCompressor],[0,1])
+	r5:decomposition(FEvictor,[Evictor],[1,1])
+	r6:decomposition(Evictor,[featureCriticalEviction],[0,1])
+	r7:decomposition(Evictor,[featureEvictorDaemon],[0,1])
+	r8:decomposition(Evictor,[featureEvictor],[1,1])
+	r9:expression(((featureVerifier) => ((featureINCompressor) AND (featureTreeVisitor))))
+	r10:expression(((~ (featureEvictor)) OR (featureVerifier)))
+	r11:decomposition(BTree,[FEvictor],[0,1])
+

@@ -1,6 +1,6 @@
 package com.github.coffeeframework.hlvlExtended.test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,6 +31,8 @@ import com.github.coffeeframework.hlvlExtended.Merge;
 
 class MergeTest {
 
+	public final static String INPUT_PATH = "./hlvlModels/testModelsMerge/";
+	public final static String OUTPUT_PATH = "./outputTest/testModelsMerge/";
 	@BeforeEach
 	private void initialization() {
 		
@@ -67,19 +69,14 @@ class MergeTest {
 
 	}
 	
-	
-	private int evaluate(String dimacsFilePath) {
+	private int solutions(String dimacsFilePath) {
 		ISolver solver = SolverFactory.newDefault();
 		solver.setTimeout(3600); // 1 hour timeout
 		
 		Reader reader = new DimacsReader(solver);
 		PrintWriter out = new PrintWriter(System.out, true);
 		try {
-<<<<<<< HEAD
-			IProblem problem = reader.parseInstance("./test/fameDB.txt");
-=======
 			IProblem problem = reader.parseInstance(dimacsFilePath);
->>>>>>> ac9c7f40f2899fcd93a0ada53bf31e3f11d1dca2
 			
 			if (problem.isSatisfiable()) {
 				System.out.println("Satisfiable !");
@@ -121,7 +118,6 @@ class MergeTest {
 				"relations:\n" + 
 				"	r0: common(a)\n" +
 				"   r1: decomposition(a, [b], [1,1])";
-		
 		String B = "model  B\n" + 
 				"elements: \n" + 
 				"	boolean a\n" +
@@ -129,27 +125,49 @@ class MergeTest {
 				"relations:\n" + 
 				"	r0: common(a)\n" + 
 				"   r1: decomposition(a, [c], [1,1])";
-		
-		String[] modelUris = { A, B };
+		String[] modelUris = {A, B};
+		String outputPath = OUTPUT_PATH + "mergeAB.txt";
 		
 		try {
+			HLVLParser parser = HLVLParser.getInstance();
+			Model[] models = parser.generateModels(modelUris);
+			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
+			String mergedDimacs = DIMACS.toString(Merge.union(currentDimacs));
+			writeFile(outputPath, mergedDimacs);
+			assertTrue(solutions(outputPath) == 2);
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void mergeFameDB() {
+		
+		try {
+			String A = readFile(INPUT_PATH + "FameDB/FameDB-A.hlvl");
+			String B = readFile(INPUT_PATH + "FameDB/FameDB-B.hlvl");
+			String[] modelUris = {A, B};
+			String outputPath = OUTPUT_PATH + "mergeFameDB.txt";
 			
-			HLVLParser.getInstance();
-			Model[] models = HLVLParser.generateModels(modelUris);
-			List<List<List<Integer>>> currentDimacs = HLVLParser.getDIMACSs(models);
+			HLVLParser parser = HLVLParser.getInstance();
+			Model[] models = parser.generateModels(modelUris);
+			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
 			
 			String mergedDimacs = DIMACS.toString(Merge.union(currentDimacs));
-			writeFile("./test/merge_A_B.txt", mergedDimacs);
+			writeFile(outputPath, mergedDimacs);
 			
 			System.out.println(DIMACS.toString(currentDimacs.get(0)));
 			System.out.println(DIMACS.toString(currentDimacs.get(1)));
 			System.out.println(mergedDimacs);
+			System.out.println(solutions(outputPath));
 			
-			//assertTrue(evaluate("./test/merge_A_B.txt") == 0);
-			
+			assertTrue(solutions(outputPath) == 2);
+					
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
+	
+	//TODO: Build a test for each model
 }

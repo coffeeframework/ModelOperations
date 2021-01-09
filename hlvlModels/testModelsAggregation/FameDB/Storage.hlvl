@@ -1,0 +1,17 @@
+model  Storage
+elements: 
+	boolean Unindexed
+	boolean BTree
+	boolean Index
+	boolean delete
+	boolean put
+	boolean get
+	boolean API
+	boolean Storage
+relations:
+	r0: common(Storage)
+	r1:group(API,[get, put, delete],[1,*])
+	r2:decomposition(Storage,[API],[1,1])
+	r3:group(Index,[BTree, Unindexed],[1,1])
+	r4:decomposition(Storage,[Index],[1,1])
+

@@ -1,0 +1,43 @@
+model  FPersistency
+elements: 
+	boolean featureIO
+	boolean featureSynchronizedIO
+	boolean IO
+	boolean featureChunkedNIO
+	boolean featureNIO
+	boolean FNIOType
+	boolean featureDirectNIO
+	boolean NIO
+	boolean FIOFeature
+	boolean featureCleanerDaemon
+	boolean featureLookAheadCache
+	boolean Cleaner
+	boolean featureCheckpointerDaemon
+	boolean featureCustomizableCheckpointerBytes
+	boolean featureCustomizableCheckpointerTime
+	boolean Checkpointer
+	boolean featureEnvironmentLock
+	boolean featureHandleFullDiscError
+	boolean featureFileHandleCache
+	boolean featureChecksum
+	boolean FPersistencyFeatures
+	boolean Persistency
+	boolean FPersistency
+relations:
+	r0: common(FPersistency)
+	r1:decomposition(FPersistency,[Persistency],[1,1])
+	r2:group(FPersistencyFeatures,[featureChecksum, featureFileHandleCache, featureHandleFullDiscError, featureEnvironmentLock, Checkpointer, Cleaner],[1,*])
+	r3:decomposition(Checkpointer,[featureCustomizableCheckpointerTime],[0,1])
+	r4:decomposition(Checkpointer,[featureCustomizableCheckpointerBytes],[0,1])
+	r5:decomposition(Checkpointer,[featureCheckpointerDaemon],[0,1])
+	r6:decomposition(Cleaner,[featureLookAheadCache],[0,1])
+	r7:decomposition(Cleaner,[featureCleanerDaemon],[0,1])
+	r8:group(FIOFeature,[NIO, IO],[1,1])
+	r9:decomposition(Persistency,[FIOFeature],[1,1])
+	r10:decomposition(NIO,[featureDirectNIO],[0,1])
+	r11:group(FNIOType,[featureNIO, featureChunkedNIO],[1,1])
+	r12:decomposition(NIO,[FNIOType],[1,1])
+	r13:decomposition(IO,[featureSynchronizedIO],[0,1])
+	r14:decomposition(IO,[featureIO],[1,1])
+	r15:decomposition(Persistency,[FPersistencyFeatures],[0,1])
+

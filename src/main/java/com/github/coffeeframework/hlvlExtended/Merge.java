@@ -1,15 +1,9 @@
 package com.github.coffeeframework.hlvlExtended;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.file.ReadOnlyFileSystemException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +27,8 @@ public class Merge {
 		for (int i = 1; i < dimacs.size(); i++) {
 
 			List<List<Integer>> currentDimacs = dimacs.get(i); // φFM2
-			List<Integer> currentElements = HLVLParser.getElementsFromDIMACS(currentDimacs); // FFM2
-			List<Integer> mergeResultElements = HLVLParser.getElementsFromDIMACS(mergeResult); // FFM1
+			List<Integer> currentElements = HLVLParser.getElementsFromDIMACS(new ArrayList<>(currentDimacs)); // FFM2
+			List<Integer> mergeResultElements = HLVLParser.getElementsFromDIMACS(new ArrayList<>(mergeResult)); // FFM1
 
 			// exp1 = not(FFM2 \ FFM1)
 			List<Integer> exp1 = (new ArrayList<>(currentElements)).stream()

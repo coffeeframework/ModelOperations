@@ -1,9 +1,0 @@
-model  Gtp
-elements: 
-	boolean Undirected
-	boolean Directed
-	boolean Gtp
-relations:
-	r0:group(Gtp,[Directed, Undirected],[1,1])
-	r1: common(Gtp)
-

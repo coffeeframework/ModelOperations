@@ -1,0 +1,41 @@
+model  FStatistics
+elements: 
+	boolean featureStatisticsBase
+	boolean featureStatisticsTransaction
+	boolean featureStatisticsSequence
+	boolean featureStatisticsPreload
+	boolean featureStatisticsLock
+	boolean featureStatisticsDatabase
+	boolean featureStatisticsEnvCaching
+	boolean featureStatisticsEnvCheckpointer
+	boolean featureStatisticsEnvCleaner
+	boolean featureStatisticsEnvEvictor
+	boolean featureStatisticsEnvFSync
+	boolean featureStatisticsEnvINCompressor
+	boolean featureStatisticsEnvLog
+	boolean EnvStats
+	boolean FStatisticsFeatures
+	boolean Statistics
+	boolean FStatistics
+relations:
+	r0: common(FStatistics)
+	r1:decomposition(FStatistics,[Statistics],[1,1])
+	r2:decomposition(Statistics,[FStatisticsFeatures],[1,1])
+	r3:decomposition(EnvStats,[featureStatisticsEnvLog],[0,1])
+	r4:decomposition(EnvStats,[featureStatisticsEnvINCompressor],[0,1])
+	r5:decomposition(EnvStats,[featureStatisticsEnvFSync],[0,1])
+	r6:decomposition(EnvStats,[featureStatisticsEnvEvictor],[0,1])
+	r7:decomposition(EnvStats,[featureStatisticsEnvCleaner],[0,1])
+	r8:decomposition(EnvStats,[featureStatisticsEnvCheckpointer],[0,1])
+	r9:decomposition(EnvStats,[featureStatisticsEnvCaching],[0,1])
+	r10:decomposition(FStatisticsFeatures,[EnvStats],[0,1])
+	r11:decomposition(FStatisticsFeatures,[featureStatisticsDatabase],[0,1])
+	r12:decomposition(FStatisticsFeatures,[featureStatisticsLock],[0,1])
+	r13:decomposition(FStatisticsFeatures,[featureStatisticsPreload],[0,1])
+	r14:decomposition(FStatisticsFeatures,[featureStatisticsSequence],[0,1])
+	r15:decomposition(FStatisticsFeatures,[featureStatisticsTransaction],[0,1])
+	r16:decomposition(Statistics,[featureStatisticsBase],[1,1])
+	r17:expression(((~ (featureStatisticsEnvEvictor)) OR (featureStatisticsLock)))
+	r18:expression(((~ (featureStatisticsEnvCaching)) OR (featureStatisticsLock)))
+	r19:expression(((~ (FStatisticsFeatures)) OR (featureStatisticsPreload)))
+
