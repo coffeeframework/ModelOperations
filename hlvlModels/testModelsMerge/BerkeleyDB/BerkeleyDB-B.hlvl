@@ -1,4 +1,4 @@
-model  BerkeleyDB
+model  BerkeleyDBB
 elements: 
 	boolean BASE
 	boolean featureEvictor

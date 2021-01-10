@@ -1,4 +1,4 @@
-model  GPL
+model  GPLB
 elements: 
 	boolean Base
 	boolean WithEdges
@@ -56,19 +56,5 @@ relations:
 	r19:group(Implementation,[OnlyVertices, WithNeighbors, WithEdges],[1,1])
 	r20:decomposition(MainGpl,[Implementation],[1,1])
 	r21:decomposition(MainGpl,[Base],[1,1])
-	r22:expression(((Number) => ((Gtp) AND (Src))))
-	r23:expression(((Connected) => ((Undirected) AND (Src))))
-	r24:expression(((Cycle) => ((Gtp) AND (DFS))))
-	r25:expression((((MSTKruskal) OR (MSTPrim)) => ((Undirected) AND (Weighted))))
-	r26:expression((((MSTKruskal) OR (MSTPrim)) => (~ ((MSTKruskal) AND (MSTPrim)))))
-	r27:expression((((WithEdges) AND (Weighted)) => (WeightedWithEdges)))
-	r28:expression((((OnlyVertices) AND (Directed)) => (DirectedOnlyVertices)))
-	r29:expression((((WithNeighbors) AND (Directed)) => (DirectedWithNeighbors)))
-	r30:expression((((WithEdges) AND (Directed)) => (DirectedWithEdges)))
-	r31:expression((((OnlyVertices) AND (Undirected)) => (UndirectedOnlyVertices)))
-	r32:expression((((WithNeighbors) AND (Undirected)) => (UndirectedWithNeighbors)))
-	r33:expression((((WithEdges) AND (Undirected)) => (UndirectedWithEdges)))
-	r34:expression(((~ (Alg)) OR (MSTKruskal)))
-	r35:expression(((~ (Alg)) OR (MSTKruskal)))
-	r36:decomposition(MainGpl,[Src],[0,1])
+	r22:decomposition(MainGpl,[Src],[0,1])
 

@@ -43,7 +43,7 @@ public class DIMACS {
 		List<Integer> result = new ArrayList<>();
 		result.addAll(cloneVariables(firstClause));
 		result.addAll(cloneVariables(secondClause));
-		return result;
+		return result.stream().distinct().collect(Collectors.toList());
 	}
 
 	public static String toString(List<List<Integer>> dimacs) {
@@ -98,15 +98,20 @@ public class DIMACS {
 			List<Integer> exp2 = (cloneVariables(mergeResultElements)).stream()
 					.filter(element -> !(currentElements.contains(element))).map(element -> (element *= -1))
 					.collect(Collectors.toList());
+			
 
 			// exp3 = φFM1 ∧ not(FFM2 \ FFM1 )
 			List<List<Integer>> exp3 = cloneDimacs(mergeResult);
 			exp1.forEach(element -> exp3.add(new ArrayList<>(Arrays.asList(element.intValue()))));
-
+			System.out.println("---------------------");
+			System.out.println(exp2);
+			
 			// exp4 = φFM2 ∧ not(FFM1 \ FFM2 )
 			List<List<Integer>> exp4 = cloneDimacs(currentDimacs);
 			exp2.forEach(element -> exp4.add(new ArrayList<>(Arrays.asList(element.intValue()))));
-
+			System.out.println(exp4);
+			System.out.println("---------------------");
+			
 			// mergeResult = (φFM1 ∧ not(FFM2 \ FFM1 )) ∨ (φFM2 ∧ not(FFM1 \ FFM2 ))
 			List<List<List<Integer>>> modelDimacs = new ArrayList<>();
 			modelDimacs.add(exp3);

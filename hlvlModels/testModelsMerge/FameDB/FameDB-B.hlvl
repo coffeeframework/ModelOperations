@@ -1,4 +1,4 @@
-model  FameDB
+model  FameDBB
 elements: 
 	boolean Unindexed
 	boolean BTree

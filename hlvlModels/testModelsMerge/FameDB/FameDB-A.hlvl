@@ -1,4 +1,4 @@
-model  FameDB
+model  FameDBA
 elements: 
 	boolean delete
 	boolean put
