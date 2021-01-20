@@ -14,8 +14,3 @@ relations:
 	r1: common(Alg)
 	r2:decomposition(StrongC,[Transpose],[1,1])
 	r3:decomposition(StrongC,[StronglyConnected],[1,1])
-	r4:expression((((MSTKruskal) OR (MSTPrim)) => (~ ((MSTKruskal) AND (MSTPrim)))))
-	r5:expression(((~ (StrongC)) OR (~ (Connected))))
-	r6:expression(((~ (StrongC)) OR (~ (MSTPrim))))
-	r7:expression(((~ (StrongC)) OR (~ (MSTKruskal))))
-

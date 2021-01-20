@@ -1,0 +1,19 @@
+model ToyModel
+elements:
+    boolean toyModel
+    boolean a
+    boolean b
+    boolean c
+    boolean d
+    boolean e
+    boolean f
+    boolean g
+    boolean h
+    boolean i
+    boolean j
+relations:
+    r0: common(toyModel)
+    r1: group(a, [e, f], [1,1])
+    r2: group(b, [g, h], [0,1])
+    r3: decomposition(c, [i], [1,1])
+    r4: decomposition(d, [j], [0,1])

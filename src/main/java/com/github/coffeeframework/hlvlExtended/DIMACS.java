@@ -48,7 +48,7 @@ public class DIMACS {
 
 	public static String toString(List<List<Integer>> dimacs) {
 		String result = "c\n" + "c DIMACS code generated using the Coffee framework\n" + "c\n" + "p cnf "
-				+ HLVLParser.getElementsFromDIMACS(dimacs).size() + " " + dimacs.size() + "\n";
+				+ DIMACS.getElementsFromDIMACS(dimacs).size() + " " + dimacs.size() + "\n";
 
 		for (int i = 0; i < dimacs.size(); i++) {
 			List<Integer> clause = dimacs.get(i);
@@ -86,8 +86,8 @@ public class DIMACS {
 
 			List<List<Integer>> currentDimacs = cloneDimacs(dimacs.get(i)); // φFM2
 
-			List<Integer> currentElements = HLVLParser.getElementsFromDIMACS(cloneDimacs(currentDimacs)); // FFM2
-			List<Integer> mergeResultElements = HLVLParser.getElementsFromDIMACS(cloneDimacs(mergeResult)); // FFM1
+			List<Integer> currentElements = DIMACS.getElementsFromDIMACS(cloneDimacs(currentDimacs)); // FFM2
+			List<Integer> mergeResultElements = DIMACS.getElementsFromDIMACS(cloneDimacs(mergeResult)); // FFM1
 
 			// exp1 = not(FFM2 \ FFM1)
 			List<Integer> exp1 = (cloneVariables(currentElements)).stream()
@@ -144,5 +144,15 @@ public class DIMACS {
 			clauseClone.add(variable.intValue());
 		}
 		return clauseClone;
+	}
+	
+
+	public static List<Integer> getElementsFromDIMACS(List<List<Integer>> dimacs) {
+
+		List<Integer> elements = new ArrayList<>();
+		dimacs.forEach(clause -> {
+			elements.addAll(clause);
+		});
+		return elements.stream().map(variable -> Math.abs(variable)).distinct().collect(Collectors.toList());
 	}
 }

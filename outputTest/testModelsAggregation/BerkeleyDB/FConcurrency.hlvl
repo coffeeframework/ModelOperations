@@ -9,4 +9,8 @@ elements:
 relations:
 	r0:group(FConcurrency,[featureLatch, featureFSync, featureTransaction, dummyFeatureLocking, featureCheckLeaks],[1,*])
 	r1: common(FConcurrency)
-	
+	r2:expression(((~ (featureLatch)) OR (featureCheckLeaks)))
+	r3:expression(((~ (featureLatch)) OR (featureFSync)))
+	r4:expression(((~ (featureCheckLeaks)) OR (dummyFeatureLocking)))
+	r5:expression(((~ (featureTransaction)) OR (featureLatch)))
+

@@ -56,28 +56,21 @@ public class ModelOperations {
 	// --------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 
-	public static String merge(Model[] models, MergeMode mode) {
+	public static List<List<Integer>> merge(Model[] models, MergeMode mode) {
+		return Merge.merge(models, mode);
+	}
+	
+	public static String mergeToString(Model[] models, MergeMode mode) {
+		return Merge.mergeToString(models, mode);
+	}
+	
 
-		List<List<Integer>> mergedDimacs = null;
-		List<List<List<Integer>>> dimacs = HLVLParser.getDIMACSs(models);
-
-		switch (mode) {
-		case UNION:
-			mergedDimacs = Merge.union(dimacs);
-			break;
-
-		case INTERSECTION:
-			mergedDimacs = Merge.intersection(dimacs);
-			break;
-
-		case DIFF:
-			mergedDimacs = Merge.difference(dimacs);
-			break;
-
-		default:
-			break;
-		}
-		return DIMACS.toString(mergedDimacs);
+	public static String aggregateToString(Model[] models, String modelName) throws Exception {
+		return Aggregation.aggregateToString(models, modelName);
+	}
+	
+	public static Model aggregate(Model[] models, String modelName) throws Exception {
+		return Aggregation.aggregate(models, modelName);
 	}
 
 }

@@ -1,0 +1,8 @@
+model B
+elements:
+    boolean b
+    boolean g
+    boolean h
+relations:
+    r0: common(b)
+    r1: group(b, [g, h], [0,1])

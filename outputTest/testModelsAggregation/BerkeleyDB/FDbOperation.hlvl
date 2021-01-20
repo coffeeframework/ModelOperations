@@ -6,4 +6,6 @@ elements:
 relations:
 	r0:group(FDbOperation,[featureDeleteDb, featureTruncateDb],[1,*])
 	r1: common(FDbOperation)
-	
+	r2:expression(((featureTruncateDb) => (featureDeleteDb)))
+	r3:expression(((~ (featureDeleteDb)) OR (featureTruncateDb)))
+

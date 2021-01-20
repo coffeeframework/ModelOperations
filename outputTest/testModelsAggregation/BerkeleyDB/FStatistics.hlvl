@@ -35,4 +35,7 @@ relations:
 	r14:decomposition(FStatisticsFeatures,[featureStatisticsSequence],[0,1])
 	r15:decomposition(FStatisticsFeatures,[featureStatisticsTransaction],[0,1])
 	r16:decomposition(Statistics,[featureStatisticsBase],[1,1])
-	
+	r17:expression(((~ (featureStatisticsEnvEvictor)) OR (featureStatisticsLock)))
+	r18:expression(((~ (featureStatisticsEnvCaching)) OR (featureStatisticsLock)))
+	r19:expression(((~ (FStatisticsFeatures)) OR (featureStatisticsPreload)))
+

@@ -1,0 +1,7 @@
+model C
+elements:
+    boolean c
+    boolean i
+relations:
+    r0: common(c)
+    r3: decomposition(c, [i], [1,1])

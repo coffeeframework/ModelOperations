@@ -20,7 +20,6 @@ import com.github.coffeeframework.basickhlvlpackage.HlvlBasicKeys;
 
 public class Aggregation {
 
-
 	/**
 	 * Compose an array of HLVL variability models performing an aggregation
 	 * operation. A new variability model is created where a new root element has a
@@ -45,8 +44,17 @@ public class Aggregation {
 		addElements(aggregatedModel, modelName, models);
 		addRelations(aggregatedModel, modelName, models);
 
-		System.out.println(aggregatedModel.toString());
+		// System.out.println(aggregatedModel.toString());
 		return HLVLParser.getInstance().generateModel(aggregatedModel.toString());
+	}
+
+	public static String aggregateToString(Model[] models, String modelName) {
+
+		StringBuilder aggregatedModel = new StringBuilder();
+		addElements(aggregatedModel, modelName, models);
+		addRelations(aggregatedModel, modelName, models);
+
+		return aggregatedModel.toString();
 	}
 
 	/**
@@ -185,6 +193,5 @@ public class Aggregation {
 
 		return relationString;
 	}
-
 
 }

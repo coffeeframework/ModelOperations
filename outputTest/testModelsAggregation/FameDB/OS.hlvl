@@ -1,0 +1,9 @@
+model  OS
+elements: 
+	boolean Win
+	boolean NutOS
+	boolean OS
+relations:
+	r0:group(OS,[NutOS, Win],[1,1])
+	r1: common(OS)
+

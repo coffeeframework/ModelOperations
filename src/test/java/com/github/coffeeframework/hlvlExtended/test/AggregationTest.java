@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.reader.DimacsReader;
@@ -26,14 +27,14 @@ import org.sat4j.tools.SolutionCounter;
 
 import com.coffee.generator.HLVLParser;
 import com.coffee.hlvl.Model;
+import com.github.coffeeframework.hlvlExtended.Aggregation;
 import com.github.coffeeframework.hlvlExtended.DIMACS;
 import com.github.coffeeframework.hlvlExtended.Merge;
-import com.github.coffeeframework.hlvlExtended.MergeMode;
 
-class MergeTest {
+class AggregationTest {
 
-	public final static String INPUT_PATH = "./hlvlModels/testModelsMerge/";
-	public final static String OUTPUT_PATH = "./outputTest/testModelsMerge/";
+	public final static String INPUT_PATH = "./hlvlModels/testModelsAggregation/";
+	public final static String OUTPUT_PATH = "./outputTest/testModelsAggregation/";
 
 	private String readFile(String path) {
 		String content = "";
@@ -116,21 +117,23 @@ class MergeTest {
 		}
 		return solutions;
 	}
-
-	@Test
-	public void mergeToyModel() {
-		String A = readFile(INPUT_PATH + "ToyModel/ToyModelA.hlvl");
-		String B = readFile(INPUT_PATH + "ToyModel/ToyModelB.hlvl");
-
-		String[] modelUris = { A, B };
-		String outputPath = OUTPUT_PATH + "mergeToyModel.txt";
-
+	
+	@Test 
+	public void aggregationToyModel() {
 		try {
-			Model[] models = HLVLParser.getInstance().generateModels(modelUris);
-			String mergedDimacs = Merge.mergeToString(models, MergeMode.UNION);
-			writeFile(outputPath, mergedDimacs);
+			String A = readFile(INPUT_PATH + "ToyModel/A.hlvl");
+			String B = readFile(INPUT_PATH + "ToyModel/B.hlvl");
+			String C = readFile(INPUT_PATH + "ToyModel/C.hlvl");
+			String D = readFile(INPUT_PATH + "ToyModel/D.hlvl");
+			String[] modelUris = { A, B, C, D };
+			String outputPath = OUTPUT_PATH + "aggregationToyModel.txt";
 
-			assertTrue(solutions(outputPath) == 5);
+			Model[] models = HLVLParser.getInstance().generateModels(modelUris);
+			Model aggregatedModel = Aggregation.aggregate(models, "toyModel");
+			Model[] aggregatedModels = { aggregatedModel };
+			writeFile(outputPath, DIMACS.toString(HLVLParser.getInstance().getDIMACSs(aggregatedModels).get(0)));
+
+			assertTrue(solutions(outputPath) == 12);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -139,18 +142,21 @@ class MergeTest {
 	}
 
 	@Test
-	public void mergeFameDB() {
+	public void aggregationFameDB() {
 		try {
-			String A = readFile(INPUT_PATH + "FameDB/FameDB-A.hlvl");
-			String B = readFile(INPUT_PATH + "FameDB/FameDB-B.hlvl");
-			String[] modelUris = { A, B };
-			String outputPath = OUTPUT_PATH + "mergeFameDB.txt";
+			String A = readFile(INPUT_PATH + "FameDB/BufferMgr.hlvl");
+			String B = readFile(INPUT_PATH + "FameDB/DebugLogging.hlvl");
+			String C = readFile(INPUT_PATH + "FameDB/OS.hlvl");
+			String D = readFile(INPUT_PATH + "FameDB/Storage.hlvl");
+			String[] modelUris = { A, B, C, D };
+			String outputPath = OUTPUT_PATH + "aggregationFameDB.txt";
 
 			Model[] models = HLVLParser.getInstance().generateModels(modelUris);
-			String mergedDimacs = Merge.mergeToString(models, MergeMode.UNION);
-			writeFile(outputPath, mergedDimacs);
+			Model aggregatedModel = Aggregation.aggregate(models, "fameDB");
+			Model[] aggregatedModels = { aggregatedModel };
+			writeFile(outputPath, DIMACS.toString(HLVLParser.getInstance().getDIMACSs(aggregatedModels).get(0)));
 
-			assertTrue(solutions(outputPath) == 54);
+			assertTrue(solutions(outputPath) == 140);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,21 +165,29 @@ class MergeTest {
 	}
 
 	@Test
-	public void mergeCarSystem() {
+	public void aggregationGPL() {
 		try {
-			String A = readFile(INPUT_PATH + "CarSystem/carLightingSystem.hlvl");
-			String B = readFile(INPUT_PATH + "CarSystem/carPeripherySupervisionSystem.hlvl");
-			String[] modelUris = { A, B };
-			String outputPath = OUTPUT_PATH + "mergeCarSystem.txt";
+			String A = readFile(INPUT_PATH + "GPL/Alg.hlvl");
+			String B = readFile(INPUT_PATH + "GPL/Gtp.hlvl");
+			String C = readFile(INPUT_PATH + "GPL/HiddenGtp.hlvl");
+			String D = readFile(INPUT_PATH + "GPL/HiddenWgt.hlvl");
+			String E = readFile(INPUT_PATH + "GPL/Implementation.hlvl");
+			String F = readFile(INPUT_PATH + "GPL/Src.hlvl");
+			String G = readFile(INPUT_PATH + "GPL/Wgt.hlvl");
+
+			String[] modelUris = { A, B, C, D, E, F, G };
+			String outputPath = OUTPUT_PATH + "aggregationGPL.txt";
 
 			Model[] models = HLVLParser.getInstance().generateModels(modelUris);
-			String mergedDimacs = Merge.mergeToString(models, MergeMode.UNION);
-			writeFile(outputPath, mergedDimacs);
+			Model aggregatedModel = Aggregation.aggregate(models, "gpl");
+			Model[] aggregatedModels = { aggregatedModel };
+			writeFile(outputPath, DIMACS.toString(HLVLParser.getInstance().getDIMACSs(aggregatedModels).get(0)));
 
-			assertTrue(solutions(outputPath) == 2400);
+			assertTrue(solutions(outputPath) == 72576);
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 }

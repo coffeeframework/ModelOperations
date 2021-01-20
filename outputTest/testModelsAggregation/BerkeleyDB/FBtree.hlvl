@@ -20,5 +20,7 @@ relations:
 	r6:decomposition(Evictor,[featureCriticalEviction],[0,1])
 	r7:decomposition(Evictor,[featureEvictorDaemon],[0,1])
 	r8:decomposition(Evictor,[featureEvictor],[1,1])
-	r9:decomposition(BTree,[FEvictor],[0,1])
+	r9:expression(((featureVerifier) => ((featureINCompressor) AND (featureTreeVisitor))))
+	r10:expression(((~ (featureEvictor)) OR (featureVerifier)))
+	r11:decomposition(BTree,[FEvictor],[0,1])
 

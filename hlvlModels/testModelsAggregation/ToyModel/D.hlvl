@@ -1,0 +1,7 @@
+model D
+elements:
+    boolean d
+    boolean j
+relations:
+    r0: common(d)
+    r1: decomposition(d, [j], [0,1])

@@ -1,9 +1,5 @@
 package com.github.coffeeframework.hlvlExtended;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,12 +10,60 @@ import com.coffee.hlvl.Model;
 
 public class Merge {
 
+	public static List<List<Integer>> merge(Model[] models, MergeMode mode) {
+
+		List<List<Integer>> mergedDimacs = null;
+		List<List<List<Integer>>> dimacs = HLVLParser.getInstance().getDIMACSs(models);
+
+		switch (mode) {
+		case UNION:
+			mergedDimacs = union(dimacs);
+			break;
+
+		case INTERSECTION:
+			mergedDimacs = intersection(dimacs);
+			break;
+
+		case DIFF:
+			mergedDimacs = difference(dimacs);
+			break;
+
+		default:
+			break;
+		}
+		return mergedDimacs;
+	}
+	
+	public static String mergeToString(Model[] models, MergeMode mode) {
+
+		List<List<Integer>> mergedDimacs = null;
+		List<List<List<Integer>>> dimacs = HLVLParser.getInstance().getDIMACSs(models);
+
+		switch (mode) {
+		case UNION:
+			mergedDimacs = union(dimacs);
+			break;
+
+		case INTERSECTION:
+			mergedDimacs = intersection(dimacs);
+			break;
+
+		case DIFF:
+			mergedDimacs = difference(dimacs);
+			break;
+
+		default:
+			break;
+		}
+		return DIMACS.toString(mergedDimacs);
+	}
+
 	/**
 	 * 
 	 * @param dimacs
 	 * @return
 	 */
-	public static List<List<Integer>> union(List<List<List<Integer>>> dimacs) {
+	private static List<List<Integer>> union(List<List<List<Integer>>> dimacs) {
 		// φResult = (φFM1 ∧ not(FFM2 \ FFM1 )) ∨ (φFM2 ∧ not(FFM1 \ FFM2 ))
 		// not({f1, f2, ..., fn}) = ? ¬fi
 
@@ -27,8 +71,8 @@ public class Merge {
 		for (int i = 1; i < dimacs.size(); i++) {
 
 			List<List<Integer>> currentDimacs = dimacs.get(i); // φFM2
-			List<Integer> currentElements = HLVLParser.getElementsFromDIMACS(new ArrayList<>(currentDimacs)); // FFM2
-			List<Integer> mergeResultElements = HLVLParser.getElementsFromDIMACS(new ArrayList<>(mergeResult)); // FFM1
+			List<Integer> currentElements = DIMACS.getElementsFromDIMACS(new ArrayList<>(currentDimacs)); // FFM2
+			List<Integer> mergeResultElements = DIMACS.getElementsFromDIMACS(new ArrayList<>(mergeResult)); // FFM1
 
 			// exp1 = not(FFM2 \ FFM1)
 			List<Integer> exp1 = (new ArrayList<>(currentElements)).stream()
@@ -57,360 +101,16 @@ public class Merge {
 		return mergeResult;
 	}
 
-	public static List<List<Integer>> difference(List<List<List<Integer>>> dimacs) {
+	private static List<List<Integer>> difference(List<List<List<Integer>>> dimacs) {
 		// φResult = (φFM1 ∧ not(FFM2 \ FFM1 )) ∧ ¬(φFM2 ∧ not(FFM1 \ FFM2 ))
 		// not({f1, f2, ..., fn}) = ? ¬fi
 		return null;
 	}
 
-	public static List<List<Integer>> intersection(List<List<List<Integer>>> dimacs) {
+	private static List<List<Integer>> intersection(List<List<List<Integer>>> dimacs) {
 		// φResult = (φFM1 ∧ not(FFM2 \ FFM1 )) ∧ (φFM2 ∧ not(FFM1 \ FFM2 ))
 		// not({f1, f2, ..., fn}) = ? ¬fi
 		return null;
 	}
 
-	public static void main(String[] args) {
-
-		String GPLA = "model  GPLA\n" + "elements: \n" + "	boolean WithEdges\n" + "	boolean WithNeighbors\n"
-				+ "	boolean OnlyVertices\n" + "	boolean Implementation\n" + "	boolean Undirected\n"
-				+ "	boolean Directed\n" + "	boolean Gtp\n" + "	boolean UndirectedOnlyVertices\n"
-				+ "	boolean UndirectedWithNeighbors\n" + "	boolean UndirectedWithEdges\n"
-				+ "	boolean DirectedOnlyVertices\n" + "	boolean DirectedWithNeighbors\n"
-				+ "	boolean DirectedWithEdges\n" + "	boolean HiddenGtp\n" + "	boolean WeightedOnlyVertices\n"
-				+ "	boolean WeightedWithNeighbors\n" + "	boolean WeightOptions\n" + "	boolean HiddenWgt\n"
-				+ "	boolean DFS\n" + "	boolean Src\n" + "	boolean MSTKruskal\n" + "	boolean MSTPrim\n"
-				+ "	boolean Cycle\n" + "	boolean StronglyConnected\n" + "	boolean Transpose\n"
-				+ "	boolean StrongC\n" + "	boolean Alg\n" + "	boolean TestProg\n" + "	boolean MainGpl\n"
-				+ "	boolean GPL\n" + "relations:\n" + "	r0: common(GPL)\n" + "	r1:decomposition(GPL,[MainGpl],[1,1])\n"
-				+ "	r2:decomposition(MainGpl,[TestProg],[1,1])\n" + "	r3:decomposition(MainGpl,[Alg],[1,1])\n"
-				+ "	r4:decomposition(StrongC,[Transpose],[1,1])\n"
-				+ "	r5:decomposition(StrongC,[StronglyConnected],[1,1])\n" + "	r6:decomposition(Alg,[Cycle],[0,1])\n"
-				+ "	r7:decomposition(Alg,[MSTPrim],[0,1])\n" + "	r8:decomposition(Alg,[MSTKruskal],[0,1])\n"
-				+ "	r9:decomposition(Src,[DFS],[1,1])\n" + "	r10:decomposition(MainGpl,[HiddenWgt],[1,1])\n"
-				+ "	r11:decomposition(HiddenWgt,[WeightOptions],[1,1])\n"
-				+ "	r12:decomposition(WeightOptions,[WeightedWithNeighbors],[0,1])\n"
-				+ "	r13:decomposition(WeightOptions,[WeightedOnlyVertices],[0,1])\n"
-				+ "	r14:group(HiddenGtp,[DirectedWithEdges, DirectedWithNeighbors, DirectedOnlyVertices, UndirectedWithEdges, UndirectedWithNeighbors, UndirectedOnlyVertices],[1,1])\n"
-				+ "	r15:decomposition(MainGpl,[HiddenGtp],[1,1])\n" + "	r16:group(Gtp,[Directed, Undirected],[1,1])\n"
-				+ "	r17:decomposition(MainGpl,[Gtp],[1,1])\n"
-				+ "	r18:group(Implementation,[OnlyVertices, WithNeighbors, WithEdges],[1,1])\n"
-				+ "	r19:decomposition(MainGpl,[Implementation],[1,1])\n"
-				+ "	r20:expression(((StrongC) => ((Directed) AND (DFS))))\n"
-				+ "	r21:expression(((Cycle) => ((Gtp) AND (DFS))))\n"
-				+ "	r22:expression((((MSTKruskal) OR (MSTPrim)) => (~ ((MSTKruskal) AND (MSTPrim)))))\n"
-				+ "	r23:expression((((OnlyVertices) AND (Directed)) => (DirectedOnlyVertices)))\n"
-				+ "	r24:expression((((WithNeighbors) AND (Directed)) => (DirectedWithNeighbors)))\n"
-				+ "	r25:expression((((WithEdges) AND (Directed)) => (DirectedWithEdges)))\n"
-				+ "	r26:expression((((OnlyVertices) AND (Undirected)) => (UndirectedOnlyVertices)))\n"
-				+ "	r27:expression((((WithNeighbors) AND (Undirected)) => (UndirectedWithNeighbors)))\n"
-				+ "	r28:expression((((WithEdges) AND (Undirected)) => (UndirectedWithEdges)))\n"
-				+ "	r29:expression(((~ (Alg)) OR (StrongC)))\n"
-				+ "	r30:expression(((~ (MSTKruskal)) OR (Undirected)))\n"
-				+ "	r31:expression(((~ (MSTPrim)) OR (Undirected)))\n"
-				+ "	r32:expression(((~ (WithNeighbors)) OR (WeightedWithNeighbors)))\n"
-				+ "	r33:expression(((~ (OnlyVertices)) OR (WeightedOnlyVertices)))\n"
-				+ "	r34:expression(((~ (MSTKruskal)) OR (WeightedWithNeighbors)))\n"
-				+ "	r35:expression(((~ (MSTKruskal)) OR (WeightedOnlyVertices)))\n"
-				+ "	r36:decomposition(MainGpl,[Src],[0,1])\n" + "	r37:decomposition(Alg,[StrongC],[0,1])\n";
-
-		String GPLB = "model  GPLB\n" + "elements: \n" + "	boolean Base\n" + "	boolean WithEdges\n"
-				+ "	boolean WithNeighbors\n" + "	boolean OnlyVertices\n" + "	boolean Implementation\n"
-				+ "	boolean Undirected\n" + "	boolean Directed\n" + "	boolean Gtp\n"
-				+ "	boolean UndirectedOnlyVertices\n" + "	boolean UndirectedWithNeighbors\n"
-				+ "	boolean UndirectedWithEdges\n" + "	boolean DirectedOnlyVertices\n"
-				+ "	boolean DirectedWithNeighbors\n" + "	boolean DirectedWithEdges\n" + "	boolean HiddenGtp\n"
-				+ "	boolean Unweighted\n" + "	boolean Weighted\n" + "	boolean Wgt\n" + "	boolean WeightedWithEdges\n"
-				+ "	boolean WeightOptions\n" + "	boolean HiddenWgt\n" + "	boolean DFS\n" + "	boolean BFS\n"
-				+ "	boolean Src\n" + "	boolean MSTKruskal\n" + "	boolean MSTPrim\n" + "	boolean Cycle\n"
-				+ "	boolean Connected\n" + "	boolean Number\n" + "	boolean Alg\n" + "	boolean TestProg\n"
-				+ "	boolean MainGpl\n" + "	boolean GPL\n" + "relations:\n" + "	r0: common(GPL)\n"
-				+ "	r1:decomposition(GPL,[MainGpl],[1,1])\n" + "	r2:decomposition(MainGpl,[TestProg],[1,1])\n"
-				+ "	r3:decomposition(MainGpl,[Alg],[1,1])\n" + "	r4:decomposition(Alg,[Number],[0,1])\n"
-				+ "	r5:decomposition(Alg,[Connected],[0,1])\n" + "	r6:decomposition(Alg,[Cycle],[0,1])\n"
-				+ "	r7:decomposition(Alg,[MSTPrim],[0,1])\n" + "	r8:decomposition(Alg,[MSTKruskal],[0,1])\n"
-				+ "	r9:group(Src,[BFS, DFS],[1,1])\n" + "	r10:decomposition(MainGpl,[HiddenWgt],[1,1])\n"
-				+ "	r11:decomposition(HiddenWgt,[WeightOptions],[1,1])\n"
-				+ "	r12:decomposition(WeightOptions,[WeightedWithEdges],[0,1])\n"
-				+ "	r13:group(Wgt,[Weighted, Unweighted],[1,1])\n" + "	r14:decomposition(MainGpl,[Wgt],[1,1])\n"
-				+ "	r15:group(HiddenGtp,[DirectedWithEdges, DirectedWithNeighbors, DirectedOnlyVertices, UndirectedWithEdges, UndirectedWithNeighbors, UndirectedOnlyVertices],[1,1])\n"
-				+ "	r16:decomposition(MainGpl,[HiddenGtp],[1,1])\n" + "	r17:group(Gtp,[Directed, Undirected],[1,1])\n"
-				+ "	r18:decomposition(MainGpl,[Gtp],[1,1])\n"
-				+ "	r19:group(Implementation,[OnlyVertices, WithNeighbors, WithEdges],[1,1])\n"
-				+ "	r20:decomposition(MainGpl,[Implementation],[1,1])\n"
-				+ "	r21:decomposition(MainGpl,[Base],[1,1])\n" + "	r22:expression(((Number) => ((Gtp) AND (Src))))\n"
-				+ "	r23:expression(((Connected) => ((Undirected) AND (Src))))\n"
-				+ "	r24:expression(((Cycle) => ((Gtp) AND (DFS))))\n"
-				+ "	r25:expression((((MSTKruskal) OR (MSTPrim)) => ((Undirected) AND (Weighted))))\n"
-				+ "	r26:expression((((MSTKruskal) OR (MSTPrim)) => (~ ((MSTKruskal) AND (MSTPrim)))))\n"
-				+ "	r27:expression((((WithEdges) AND (Weighted)) => (WeightedWithEdges)))\n"
-				+ "	r28:expression((((OnlyVertices) AND (Directed)) => (DirectedOnlyVertices)))\n"
-				+ "	r29:expression((((WithNeighbors) AND (Directed)) => (DirectedWithNeighbors)))\n"
-				+ "	r30:expression((((WithEdges) AND (Directed)) => (DirectedWithEdges)))\n"
-				+ "	r31:expression((((OnlyVertices) AND (Undirected)) => (UndirectedOnlyVertices)))\n"
-				+ "	r32:expression((((WithNeighbors) AND (Undirected)) => (UndirectedWithNeighbors)))\n"
-				+ "	r33:expression((((WithEdges) AND (Undirected)) => (UndirectedWithEdges)))\n"
-				+ "	r34:expression(((~ (Alg)) OR (MSTKruskal)))\n" + "	r35:expression(((~ (Alg)) OR (MSTKruskal)))\n"
-				+ "	r36:decomposition(MainGpl,[Src],[0,1])\n" + "\n";
-
-		
-		String A = "model  A\n" + 
-				"elements: \n" + 
-				"	boolean a\n" + 
-				"	boolean b\n" + 
-				"relations:\n" + 
-				"	r0: common(a)\n" +
-				"   r1: decomposition(a, [b], [1,1])";
-		
-		String B = "model  B\n" + 
-				"elements: \n" + 
-				"	boolean a\n" +
-				"	boolean c\n" +
-				"relations:\n" + 
-				"	r0: common(a)\n" + 
-				"   r1: decomposition(a, [c], [1,1])";
-		
-		String fameA = "model  FameDBA\n" + 
-				"elements: \n" + 
-				"	boolean delete\n" + 
-				"	boolean put\n" + 
-				"	boolean get\n" + 
-				"	boolean API\n" + 
-				"	boolean Storage\n" + 
-				"	boolean DebugLogging\n" + 
-				"	boolean InMemory\n" + 
-				"	boolean Dynamic\n" + 
-				"	boolean Static\n" + 
-				"	boolean MemAlloc\n" + 
-				"	boolean Persistent\n" + 
-				"	boolean BufferMgr\n" + 
-				"	boolean NutOS\n" + 
-				"	boolean OS\n" + 
-				"	boolean DB\n" + 
-				"relations:\n" + 
-				"	r0: common(DB)\n" + 
-				"	r1:decomposition(DB,[OS],[1,1])\n" + 
-				"	r2:decomposition(OS,[NutOS],[1,1])\n" + 
-				"	r3:group(BufferMgr,[Persistent, InMemory],[1,1])\n" + 
-				"	r4:decomposition(DB,[BufferMgr],[1,1])\n" + 
-				"	r5:group(MemAlloc,[Static, Dynamic],[1,1])\n" + 
-				"	r6:decomposition(Persistent,[MemAlloc],[1,1])\n" + 
-				"	r7:decomposition(DB,[DebugLogging],[0,1])\n" + 
-				"	r8:decomposition(DB,[Storage],[1,1])\n" + 
-				"	r9:group(API,[get, put, delete],[1,*])\n" + 
-				"	r10:decomposition(Storage,[API],[1,1])";
-		
-		String fameB = "model  FameDBB\n" + 
-				"elements: \n" + 
-				"	boolean Unindexed\n" + 
-				"	boolean BTree\n" + 
-				"	boolean Index\n" + 
-				"	boolean Storage\n" + 
-				"	boolean DebugLogging\n" + 
-				"	boolean InMemory\n" + 
-				"	boolean LFU\n" + 
-				"	boolean LRU\n" + 
-				"	boolean PageRepl\n" + 
-				"	boolean Persistent\n" + 
-				"	boolean BufferMgr\n" + 
-				"	boolean Win\n" + 
-				"	boolean OS\n" + 
-				"	boolean DB\n" + 
-				"relations:\n" + 
-				"	r0: common(DB)\n" + 
-				"	r1:decomposition(DB,[OS],[1,1])\n" + 
-				"	r2:decomposition(OS,[Win],[1,1])\n" + 
-				"	r3:group(BufferMgr,[Persistent, InMemory],[1,1])\n" + 
-				"	r4:decomposition(DB,[BufferMgr],[1,1])\n" + 
-				"	r5:group(PageRepl,[LRU, LFU],[1,1])\n" + 
-				"	r6:decomposition(Persistent,[PageRepl],[1,1])\n" + 
-				"	r7:decomposition(DB,[DebugLogging],[0,1])\n" + 
-				"	r8:decomposition(DB,[Storage],[1,1])\n" + 
-				"	r9:group(Index,[BTree, Unindexed],[1,1])\n" + 
-				"	r10:decomposition(Storage,[Index],[1,1])\n";
-		
-		String fameDB = "model  FameDB\n" + 
-				"elements: \n" + 
-				"	boolean Unindexed\n" + 
-				"	boolean BTree\n" + 
-				"	boolean Index\n" + 
-				"	boolean delete\n" + 
-				"	boolean put\n" + 
-				"	boolean get\n" + 
-				"	boolean API\n" + 
-				"	boolean Storage\n" + 
-				"	boolean DebugLogging\n" + 
-				"	boolean InMemory\n" + 
-				"	boolean LFU\n" + 
-				"	boolean LRU\n" + 
-				"	boolean PageRepl\n" + 
-				"	boolean Dynamic\n" + 
-				"	boolean Static\n" + 
-				"	boolean MemAlloc\n" + 
-				"	boolean Persistent\n" + 
-				"	boolean BufferMgr\n" + 
-				"	boolean Win\n" + 
-				"	boolean NutOS\n" + 
-				"	boolean OS\n" + 
-				"	boolean DB\n" + 
-				"relations:\n" + 
-				"	r0: common(DB)\n" + 
-				"	r1:group(OS,[NutOS, Win],[1,1])\n" + 
-				"	r2:decomposition(DB,[OS],[1,1])\n" + 
-				"	r3:group(BufferMgr,[Persistent, InMemory],[1,1])\n" + 
-				"	r4:decomposition(DB,[BufferMgr],[1,1])\n" + 
-				"	r5:group(MemAlloc,[Static, Dynamic],[1,1])\n" + 
-				"	r6:decomposition(Persistent,[MemAlloc],[1,1])\n" + 
-				"	r7:group(PageRepl,[LRU, LFU],[1,1])\n" + 
-				"	r8:decomposition(Persistent,[PageRepl],[1,1])\n" + 
-				"	r9:decomposition(DB,[DebugLogging],[0,1])\n" + 
-				"	r10:decomposition(DB,[Storage],[1,1])\n" + 
-				"	r11:group(API,[get, put, delete],[1,*])\n" + 
-				"	r12:decomposition(Storage,[API],[1,1])\n" + 
-				"	r13:group(Index,[BTree, Unindexed],[1,1])\n" + 
-				"	r14:decomposition(Storage,[Index],[1,1])\n";
-		
-		try {
-			
-//			String[] originalModels = { 
-//					readFile("./HLVLModels/Original_models/FameDB.hlvl"),
-//					readFile("./HLVLModels/Original_models/BerkeleyDB.hlvl"),
-//					readFile("./HLVLModels/Original_models/GPL.hlvl"),
-//					readFile("./HLVLModels/Original_models/carSystem.hlvl")
-//			};
-//			
-//			String[] aggregationBerkeleyDB = { 
-//					readFile("./HLVLModels/Test_models_Aggregation/FBtree.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/FConcurrency.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/FDbOperation.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/FLogging.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/FPersistency.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/FStatistics.hlvl"),
-//			};
-//			
-//			String[] aggregationFameDB = { 
-//					readFile("./HLVLModels/Test_models_Aggregation/BufferMgr.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/DebugLogging.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/OS.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/Storage.hlvl")
-//			};
-//			
-//			String[] aggregationGPL = { 
-//					readFile("./HLVLModels/Test_models_Aggregation/Alg.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/Gtp.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/HiddenGtp.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/HiddenWgt.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/Implementation.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/Src.hlvl"),
-//					readFile("./HLVLModels/Test_models_Aggregation/Wgt.hlvl"),
-//			};
-//			
-//			String[] mergeBerkeleyDB = { 
-//					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-A.hlvl"),
-//					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-B.hlvl"),
-//			};
-//			
-//			String[] mergeFameDB = { 
-//					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-A.hlvl"),
-//					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-B.hlvl"),
-//			};
-//			
-//			String[] mergeGPL = { 
-//					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl"),
-//					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
-//			};
-//			
-//			String[] mergeCarSystem = { 
-//					readFile("./HLVLModels/Test_models_Merge/CarSystem/carLightingSystem.hlvl"),
-//					readFile("./HLVLModels/Test_models_Merge/CarSystem/carPeripherySupervisionSystem.hlvl"),
-//					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation.hlvl"),
-//			};
-//			
-//			String[] mergeEShop = { 
-//					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-A.hlvl"),
-//					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-B.hlvl"),
-//			};
-			
-			String[] aggregationBerkeleyDB = { 
-					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FBtree.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FConcurrency.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FDbOperation.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FLogging.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FPersistency.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/BerkeleyDB/FStatistics.hlvl"),
-			};
-			
-			String[] aggregationFameDB = { 
-					readFile("./HLVLModels/Test_models_Aggregation/FameDB/BufferMgr.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FameDB/DebugLogging.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FameDB/OS.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/FameDB/Storage.hlvl")
-			};
-			
-			String[] aggregationGPL = { 
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/Alg.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/Gtp.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/HiddenGtp.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/HiddenWgt.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/Implementation.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/Src.hlvl"),
-					readFile("./HLVLModels/Test_models_Aggregation/GPL/Wgt.hlvl"),
-			};
-			
-			String[] mergeBerkeleyDB = { 
-					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/BerkeleyDB/BerkeleyDB-B.hlvl"),
-			};
-			
-			String[] mergeFameDB = { 
-					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/FameDB/FameDB-B.hlvl"),
-			};
-			
-			String[] mergeGPL = { 
-					readFile("./HLVLModels/Test_models_Merge/GPL/GPL-A.hlvl")
-					// readFile("./HLVLModels/Test_models_Merge/GPL/GPL-B.hlvl"),
-			};
-			
-			String[] mergeCarSystem = { 
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/carLightingSystem.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/carPeripherySupervisionSystem.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/CarSystem/FMVSSRegulation_USA.hlvl"),
-			};
-			
-			String[] mergeEShop = { 
-					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-A.hlvl"),
-					readFile("./HLVLModels/Test_models_Merge/EShop/EShop-B.hlvl"),
-			};
-			
-			String[] modelUris = {  };
-			
-			HLVLParser parser = HLVLParser.getInstance();
-			Model[] models = parser.generateModels(mergeGPL);
-			List<List<List<Integer>>> currentDimacs = parser.getDIMACSs(models);
-			
-			System.out.println(DIMACS.toString(currentDimacs.get(0)));
-
-			System.out.println(DIMACS.toString(currentDimacs.get(1)));
-			System.out.println(DIMACS.toString(union(currentDimacs)));
-			
-		} catch (
-
-		Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-	
-	public static String readFile(String path) throws FileNotFoundException, IOException {
-	      String content = "";
-	      FileReader fr = new FileReader(path);
-	      BufferedReader br = new BufferedReader(fr);
-	      String line;
-	      while((line = br.readLine())!=null) {
-	          content += line + "\n";
-	      }
-	      br.close();
-	      fr.close();
-	      return content;
-	}
 }
