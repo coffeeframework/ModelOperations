@@ -1,9 +1,0 @@
-model  Src
-elements: 
-	boolean DFS
-	boolean BFS
-	boolean Src
-relations:
-	r0:group(Src,[BFS, DFS],[1,1])
-	r1: common(Src)
-

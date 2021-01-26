@@ -44,7 +44,7 @@ public class Aggregation {
 		addElements(aggregatedModel, modelName, models);
 		addRelations(aggregatedModel, modelName, models);
 
-		// System.out.println(aggregatedModel.toString());
+		System.out.println(aggregatedModel.toString());
 		return HLVLParser.getInstance().generateModel(aggregatedModel.toString());
 	}
 

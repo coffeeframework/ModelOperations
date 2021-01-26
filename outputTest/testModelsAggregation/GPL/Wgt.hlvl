@@ -1,9 +1,0 @@
-model  Wgt
-elements: 
-	boolean Unweighted
-	boolean Weighted
-	boolean Wgt
-relations:
-	r0:group(Wgt,[Weighted, Unweighted],[1,1])
-	r1: common(Wgt)
-
